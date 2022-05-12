@@ -92,6 +92,8 @@ class Encoder:
                 #     self._training_step(batch)
                 # else:
                 #     break
+                # empy cache
+                torch.cuda.empty_cache()
                 self._training_step(batch)
 
             avg_epoch_loss = self.total_loss / len(dataset)
