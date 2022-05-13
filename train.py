@@ -21,11 +21,11 @@ from transformers import (
     get_linear_schedule_with_warmup,
     )
 
-from qg.t5_model.objects.encoder import Encoder
-from qg.t5_model.objects.preprocessor import DataProcessor
-from qg.config.config import get_logger, device, today, now, PACKAGE_ROOT
+from encoder import Encoder
+from preprocessor import DataProcessor
+from config import get_logger, device, today, now, PACKAGE_ROOT
 _logger = get_logger(logger_name=__name__)
-RESULTS_T5_DIR = PACKAGE_ROOT/"qg"/"t5_model"/f"results_{today}_{now}"
+RESULTS_T5_DIR = PACKAGE_ROOT/f"results_{today}_{now}"
 RESULTS_T5_DIR.mkdir(exist_ok=True)
 
 

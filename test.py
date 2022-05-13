@@ -8,8 +8,8 @@ from tqdm import tqdm
 from datasets import load_dataset
 from transformers import T5Tokenizer
 
-from qg.config.config import get_logger, device, today, now, PACKAGE_ROOT
-from qg.t5_model.objects.decoder import Decoder
+from config import get_logger, device, today, now, PACKAGE_ROOT
+from decoder import Decoder
 _logger = get_logger(logger_name=__name__)
 
 decoder_parser = argparse.ArgumentParser(description='Get all command line arguments.')

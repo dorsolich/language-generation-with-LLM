@@ -1,4 +1,4 @@
-from qg.config.config import get_logger, device
+from config import get_logger, device
 _logger = get_logger(logger_name=__name__)
 _logger.info(f"""Running in device: {device}""")
 

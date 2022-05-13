@@ -3,7 +3,7 @@ import logging
 from logging import FileHandler
 import sys
 import torch
-PACKAGE_ROOT = pathlib.Path(__file__).resolve().parents[2]
+PACKAGE_ROOT = pathlib.Path(__file__).resolve().parents[0]
 
 import time
 from datetime import date
