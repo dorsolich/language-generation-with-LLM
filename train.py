@@ -42,6 +42,7 @@ encoder_parser.add_argument('--n_epochs', type=int, default=10, help='Specify th
 encoder_parser.add_argument('--max_length_source', type=int, default=512, help='Maximum length of the source text')
 encoder_parser.add_argument('--max_length_target', type=int, default=32, help='Maximum length of the target text')
 encoder_parser.add_argument('--seed', type=int, default=1, help='Specify the global random seed')
+encoder_parser.add_argument('--test', type=bool, default=False, help='Set to true for testing the code, it will un a shortcut')
 
 def main(args):
         # Set the seed value all over the place to make this reproducible.
@@ -51,7 +52,13 @@ def main(args):
         torch.manual_seed(seed_val)
         torch.cuda.manual_seed_all(seed_val)
         
-        _logger.info(f"Running. Epochs = {args.n_epochs}, model = {args.model}, model_name = {args.model_name}")
+        _logger.info(f"""Running. Test = {args.test}
+        Epochs = {args.n_epochs}
+        batch_size = {args.batch_size}
+        model = {args.model}
+        model_name = {args.model_name},
+        results folder = {RESULTS_T5_DIR}
+        """)
         
         train_data = load_dataset('squad_v2', split='train')
         
@@ -100,7 +107,9 @@ def main(args):
                 dataset=train_dataloader,
                 optimizer=optimizer, 
                 scheduler=scheduler, 
-                epochs=args.n_epochs)
+                epochs=args.n_epochs,
+                test=args.test
+                )
 
 
         encoder.save_model(

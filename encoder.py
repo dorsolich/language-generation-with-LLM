@@ -73,7 +73,7 @@ class Encoder:
             optimizer, 
             scheduler, 
             epochs,
-            n_rows = 5
+            test = False
         ):
         
         self.model = model
@@ -82,19 +82,21 @@ class Encoder:
         init_training_time = time.time()
 
         for epoch in tqdm(range(epochs)):
-            _logger.info(f"Training epoch {epoch+1} / {epochs}.")
+            _logger.info(f"Training epoch {epoch+1} / {epochs}. Initializing training loop of batch: {len(dataset)}")
             init_epoch_time = time.time()
             self.total_loss = 0
             self.model.train()
 
             for i, batch in tqdm(enumerate(dataset)):
-                # if i < n_rows:
-                #     self._training_step(batch)
-                # else:
-                #     break
+                if test==True:
+                    if i < 5:
+                        self._training_step(batch)
+                    else:
+                        break
+                else:
                 # empy cache
-                torch.cuda.empty_cache()
-                self._training_step(batch)
+                    torch.cuda.empty_cache()
+                    self._training_step(batch)
 
             avg_epoch_loss = self.total_loss / len(dataset)
             self.epoch_loss_values.append(avg_epoch_loss)
