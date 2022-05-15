@@ -38,16 +38,34 @@ def main(args):
     model.eval().to(device)
 
     decoder = Decoder(device=device)
-    prev_passage = ""
     for i, ex in tqdm(enumerate(test_data)):
+
+        #### TEST SETTING ####
         if args.test == True:
-            if i == 0: # uncomment to debug
-                if len(ex["answers"]["text"])==0:
-                    continue
-                if ex["context"].replace('\n', '')==prev_passage:
-                    continue
+            if i == 0:
+                if decoder.decode(example=ex):
+                    decoder.tokenize(
+                                    tokenizer=tokenizer, 
+                                    max_length_source=args.context_max_length, 
+                                    truncation=True, 
+                                    padding="max_length",
+                                    return_tensors = "pt"
+                                    )
+                    decoder.decode(
+                                    model=model, 
+                                    num_beams=args.num_beams,  
+                                    question_max_length=args.question_max_length, 
+                                    repetition_penalty=2.5,
+                                    length_penalty=1,
+                                    early_stopping=True,
+                                    use_cache=True,
+                                    num_return_sequences=1,
+                                    do_sample=False
+                                    )
+        else:
+            ### NO TEST SETTING ###
+            if decoder.decode(example=ex):
                 decoder.tokenize(
-                                example=ex,
                                 tokenizer=tokenizer, 
                                 max_length_source=args.context_max_length, 
                                 truncation=True, 
@@ -65,30 +83,6 @@ def main(args):
                                 num_return_sequences=1,
                                 do_sample=False
                                 )
-        else:
-            if len(ex["answers"]["text"])==0:
-                continue
-            if ex["context"].replace('\n', '')==prev_passage:
-                continue
-            decoder.tokenize(
-                            example=ex,
-                            tokenizer=tokenizer, 
-                            max_length_source=args.context_max_length, 
-                            truncation=True, 
-                            padding="max_length",
-                            return_tensors = "pt"
-                            )
-            decoder.decode(
-                            model=model, 
-                            num_beams=args.num_beams,  
-                            question_max_length=args.question_max_length, 
-                            repetition_penalty=2.5,
-                            length_penalty=1,
-                            early_stopping=True,
-                            use_cache=True,
-                            num_return_sequences=1,
-                            do_sample=False
-                            )
                 
 
     results = {}
@@ -100,8 +94,8 @@ def main(args):
     
     file_name = f"{args.dataset_split}_questions_{today}_{now}.json"
     PATH = os.path.join(RESULTS_T5_DIR, file_name)
-    with open(PATH, "w") as f:
-        json.dump(results, f)
+    with open(PATH, "w", encoding="utf-8") as f:
+        json.dump(results, f, ensure_ascii=False)
     _logger.info(f"Questions file: {file_name}, saved in path: {RESULTS_T5_DIR}")
 
 if __name__ == '__main__':

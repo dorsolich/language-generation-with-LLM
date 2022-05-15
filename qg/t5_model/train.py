@@ -95,26 +95,24 @@ def main(args):
                         weight_decay = 0.01
                         )
 
-        # Total number of training steps is number of batches * number of epochs.
         total_steps = len(train_dataloader) * args.n_epochs
-        # Create the learning rate scheduler.
         scheduler = get_linear_schedule_with_warmup(optimizer,
-                                                        num_warmup_steps = 0.1*total_steps,
-                                                        num_training_steps = total_steps)
+                                                num_warmup_steps = 0.1*total_steps,
+                                                num_training_steps = total_steps)
 
         encoder.train_model(
-                model=model, 
-                dataset=train_dataloader,
-                optimizer=optimizer, 
-                scheduler=scheduler, 
-                epochs=args.n_epochs,
-                test=args.test
+                model = model, 
+                dataset = train_dataloader,
+                optimizer = optimizer, 
+                scheduler = scheduler, 
+                epochs = args.n_epochs,
+                test = args.test
                 )
 
 
         encoder.save_model(
-                model_name=f'{args.model_name}.pt',
-                dir=RESULTS_T5_DIR
+                model_name = f'{args.model_name}.pt',
+                dir = RESULTS_T5_DIR
                 )
         
         results = {}
@@ -136,8 +134,8 @@ def main(args):
         file_name = f"results_{args.model_name}_{today}_{now}.json"
         PATH = os.path.join(RESULTS_T5_DIR, file_name)
         
-        with open(PATH, "w") as f:
-                json.dump(results, f)
+        with open(PATH, "w", econding="utf-8") as f:
+                json.dump(results, f, ensure_ascii=False)
         
 if __name__ == '__main__':
     encoder_arguments = encoder_parser.parse_args()
