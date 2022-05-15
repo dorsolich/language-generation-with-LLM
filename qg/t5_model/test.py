@@ -15,12 +15,13 @@ _logger = get_logger(logger_name=__name__)
 decoder_parser = argparse.ArgumentParser(description='Get all command line arguments.')
 decoder_parser.add_argument('--model', type=str, default="t5-base", help='Tokenizer and pretrained model')
 decoder_parser.add_argument('--results_folder', type=str, help='Load path of trained model and save test results')
-decoder_parser.add_argument('--model_name', type=str, default="t5-base", help='Fine-tuned model name')
+decoder_parser.add_argument('--model_name', type=str, default="t5_base", help='Fine-tuned model name')
 decoder_parser.add_argument('--dataset_split', type=str, default="validation", help='Passage max length')
 decoder_parser.add_argument('--context_max_length', type=int, default=512, help='Passage max length')
 decoder_parser.add_argument('--question_max_length', type=int, default=32, help='Passage max length')
 decoder_parser.add_argument('--batch_size', type=int, default=2, help='Specify the training batch size')
 decoder_parser.add_argument('--num_beams', type=int, default=4, help='Number of beams to use')
+decoder_parser.add_argument('--test', type=bool, default=False, help='Set to true for testing the code, it will un a shortcut')
 
 
 
@@ -39,30 +40,56 @@ def main(args):
     decoder = Decoder(device=device)
     prev_passage = ""
     for i, ex in tqdm(enumerate(test_data)):
-        # if i == 0: # uncomment to debug
-        if len(ex["answers"]["text"])==0:
-            continue
-        if ex["context"].replace('\n', '')==prev_passage:
-            continue
-        decoder.tokenize(
-                        example=ex,
-                        tokenizer=tokenizer, 
-                        max_length_source=args.context_max_length, 
-                        truncation=True, 
-                        padding="max_length",
-                        return_tensors = "pt"
-                        )
-        decoder.decode(
-                        model=model, 
-                        num_beams=args.num_beams,  
-                        question_max_length=args.question_max_length, 
-                        repetition_penalty=2.5,
-                        length_penalty=1,
-                        early_stopping=True,
-                        use_cache=True,
-                        num_return_sequences=1,
-                        do_sample=False
-                        )
+        if args.test == True:
+            if i == 0: # uncomment to debug
+                if len(ex["answers"]["text"])==0:
+                    continue
+                if ex["context"].replace('\n', '')==prev_passage:
+                    continue
+                decoder.tokenize(
+                                example=ex,
+                                tokenizer=tokenizer, 
+                                max_length_source=args.context_max_length, 
+                                truncation=True, 
+                                padding="max_length",
+                                return_tensors = "pt"
+                                )
+                decoder.decode(
+                                model=model, 
+                                num_beams=args.num_beams,  
+                                question_max_length=args.question_max_length, 
+                                repetition_penalty=2.5,
+                                length_penalty=1,
+                                early_stopping=True,
+                                use_cache=True,
+                                num_return_sequences=1,
+                                do_sample=False
+                                )
+        else:
+            if len(ex["answers"]["text"])==0:
+                continue
+            if ex["context"].replace('\n', '')==prev_passage:
+                continue
+            decoder.tokenize(
+                            example=ex,
+                            tokenizer=tokenizer, 
+                            max_length_source=args.context_max_length, 
+                            truncation=True, 
+                            padding="max_length",
+                            return_tensors = "pt"
+                            )
+            decoder.decode(
+                            model=model, 
+                            num_beams=args.num_beams,  
+                            question_max_length=args.question_max_length, 
+                            repetition_penalty=2.5,
+                            length_penalty=1,
+                            early_stopping=True,
+                            use_cache=True,
+                            num_return_sequences=1,
+                            do_sample=False
+                            )
+                
 
     results = {}
     results["passages"] = decoder.contexts
