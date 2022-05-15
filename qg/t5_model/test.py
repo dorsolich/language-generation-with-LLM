@@ -38,12 +38,12 @@ def main(args):
     model.eval().to(device)
 
     decoder = Decoder(device=device)
-    for i, ex in tqdm(enumerate(test_data)):
+    for i, example in tqdm(enumerate(test_data)):
 
         #### TEST SETTING ####
         if args.test == True:
             if i == 0:
-                if decoder.decode(example=ex):
+                if decoder.decode_example(example=example):
                     decoder.tokenize(
                                     tokenizer=tokenizer, 
                                     max_length_source=args.context_max_length, 
@@ -64,7 +64,7 @@ def main(args):
                                     )
         else:
             ### NO TEST SETTING ###
-            if decoder.decode(example=ex):
+            if decoder.decode_example(example=example):
                 decoder.tokenize(
                                 tokenizer=tokenizer, 
                                 max_length_source=args.context_max_length, 
@@ -86,9 +86,9 @@ def main(args):
                 
 
     results = {}
-    results["passages"] = decoder.contexts
-    results["questions"] = decoder.questions
-    results["gen_questions"] = decoder.generated_questions
+    results["source_texts"] = decoder.source_texts
+    results["target_texts"] = decoder.target_texts
+    results["model_outputs"] = decoder.model_outputs
     results["batch_size"] = args.batch_size
     results["num_beams"] = args.num_beams
     
@@ -96,7 +96,17 @@ def main(args):
     PATH = os.path.join(RESULTS_T5_DIR, file_name)
     with open(PATH, "w", encoding="utf-8") as f:
         json.dump(results, f, ensure_ascii=False)
-    _logger.info(f"Questions file: {file_name}, saved in path: {RESULTS_T5_DIR}")
+
+    # with open(RESULTS_T5_DIR/"source_texts.txt", 'w', encoding="utf8") as f:
+    #     f.write("\n".join(results["source_texts"]))
+
+    with open(RESULTS_T5_DIR/"target_texts.txt", 'w', encoding="utf8") as f:
+        f.write("\n".join(results["target_texts"]))
+
+    with open(RESULTS_T5_DIR/"model_outputs.txt", 'w', encoding="utf8") as f:
+        f.write("\n".join(results["model_outputs"]))
+
+    _logger.info(f"Questions file: {file_name}, and text files saved in path: {RESULTS_T5_DIR}")
 
 if __name__ == '__main__':
     decoder_arguments = decoder_parser.parse_args()
