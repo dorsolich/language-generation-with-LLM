@@ -7,9 +7,9 @@ _logger.info(f"""Running in device: {device}""")
 class Decoder:
     def __init__(self, device) -> None:
         self.device = device
-        self.contexts = []
-        self.questions = []
-        self.generated_questions = []
+        self.source_texts = []
+        self.target_texts = []
+        self.model_outputs = []
         self.prev_passage = ""
 
     def decode_example(self, example):
@@ -36,9 +36,7 @@ class Decoder:
                 ):
         
         self.tokenizer = tokenizer
-        encodings = self.tokenizer(self.context, truncation=truncation, max_length=max_length_source, padding=padding, return_tensors=return_tensors)
-        self.source_ids = encodings['input_ids'].to(self.device)
-        self.source_attention_mask = encodings['attention_mask'].to(self.device)
+        self.encodings = self.tokenizer(self.context, truncation=truncation, max_length=max_length_source, padding=padding, return_tensors=return_tensors)
 
         return self
 
@@ -55,8 +53,8 @@ class Decoder:
                 ):
 
         generated_target_ids = model.generate(
-            input_ids = self.source_ids,
-            attention_mask = self.source_attention_mask,
+            input_ids = self.encodings['input_ids'].to(self.device),
+            attention_mask = self.encodings['attention_mask'].to(self.device),
             num_beams = num_beams, 
             do_sample = do_sample,
             max_length = question_max_length,
@@ -67,13 +65,13 @@ class Decoder:
             num_return_sequences = num_return_sequences
         )
         for generated_target_id in generated_target_ids:
-            generated_questions = self.tokenizer.decode(generated_target_id,
+            decoded_outputs = self.tokenizer.decode(generated_target_id,
                                                         skip_special_tokens=True,
                                                         clean_up_tokenization_spaces=True
                                                         )
 
-            self.generated_questions.append(generated_questions)
-            self.contexts.append(self.context)
-            self.questions.append(self.question)
+            self.model_outputs.append(decoded_outputs)
+            self.source_texts.append(self.context)
+            self.target_texts.append(self.question)
 
         return self
