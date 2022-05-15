@@ -103,6 +103,15 @@ def main(args):
         json.dump(results, f)
     _logger.info(f"Questions file: {file_name}, saved in path: {RESULTS_T5_DIR}")
 
+    with open(dir/f"{args.dataset_split}_source_texts.txt", 'w', encoding="utf8") as f:
+            f.write("\n".join(decoder.contexts))
+
+    with open(dir/f"{args.dataset_split}_target_texts.txt", 'w', encoding="utf-8") as f:
+        f.write("\n".join(decoder.questions))
+
+    with open(dir/f"{args.dataset_split}_model_outputs.txt", 'w', encoding="utf-8") as f:
+        f.write("\n".join(decoder.generated_questions))
+
 if __name__ == '__main__':
     decoder_arguments = decoder_parser.parse_args()
     main(decoder_arguments)
