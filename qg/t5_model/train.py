@@ -134,7 +134,7 @@ def main(args):
         file_name = f"results_{args.model_name}_{today}_{now}.json"
         PATH = os.path.join(RESULTS_T5_DIR, file_name)
         
-        with open(PATH, "w", econding="utf-8") as f:
+        with open(PATH, "w") as f:
                 json.dump(results, f, ensure_ascii=False)
         
 if __name__ == '__main__':

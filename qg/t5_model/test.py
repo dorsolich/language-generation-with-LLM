@@ -97,14 +97,14 @@ def main(args):
     with open(PATH, "w", encoding="utf-8") as f:
         json.dump(results, f, ensure_ascii=False)
 
-    # with open(RESULTS_T5_DIR/"source_texts.txt", 'w', encoding="utf8") as f:
-    #     f.write("\n".join(results["source_texts"]))
+    with open(RESULTS_T5_DIR/f"{args.dataset_split}_source_texts.txt", 'w', encoding="utf8") as f:
+        f.write("\n".join(decoder.source_texts))
 
-    with open(RESULTS_T5_DIR/"target_texts.txt", 'w', encoding="utf8") as f:
-        f.write("\n".join(results["target_texts"]))
+    with open(RESULTS_T5_DIR/f"{args.dataset_split}_target_texts.txt", 'w') as f:
+        f.write("\n".join(decoder.target_texts))
 
-    with open(RESULTS_T5_DIR/"model_outputs.txt", 'w', encoding="utf8") as f:
-        f.write("\n".join(results["model_outputs"]))
+    with open(RESULTS_T5_DIR/f"{args.dataset_split}_model_outputs.txt", 'w') as f:
+        f.write("\n".join(decoder.model_outputs))
 
     _logger.info(f"Questions file: {file_name}, and text files saved in path: {RESULTS_T5_DIR}")
 
