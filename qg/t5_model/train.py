@@ -1,7 +1,7 @@
-# import sys
-# import pathlib
-# PACKAGE_ROOT = pathlib.Path(__file__).resolve().parents[2]
-# sys.path.append(str(PACKAGE_ROOT))
+import sys
+import pathlib
+PACKAGE_ROOT = pathlib.Path(__file__).resolve().parents[2]
+sys.path.append(str(PACKAGE_ROOT))
 
 
 import os
@@ -33,7 +33,8 @@ encoder_parser = argparse.ArgumentParser(description='Get all command line argum
 encoder_parser.add_argument('--model', type=str, default="t5-base", help='Tokenizer and pretrained model')
 encoder_parser.add_argument('--model_name', type=str, default="t5_base", help='Tokenizer and pretrained model')
 encoder_parser.add_argument('--batch_size', type=int, default=2, help='Specify the training batch size')
-encoder_parser.add_argument('--preprocess', type=bool, default=True, help='Specify the global random seed')
+encoder_parser.add_argument('--preprocess', type=bool, default=True, help='')
+encoder_parser.add_argument('--preprocess_setting', type=str, default="AQPL", help="'AQPL', 'OQPL', 'AA' or 'basic'")
 encoder_parser.add_argument('--learning_rate', type=float, default=1e-4, help='Specify the initial learning rate')
 encoder_parser.add_argument('--adam_epsilon', type=float, default=1e-6, help='Specify the AdamW loss epsilon')
 encoder_parser.add_argument('--lr_decay', type=float, default=0.85, help='Specify the learning rate decay rate')
@@ -62,18 +63,24 @@ def main(args):
         
         train_data = load_dataset('squad_v2', split='train')
         
-        if args.preprocess:
-                print("processing dataset...")
-                processor = DataProcessor(
-                        sep_token=" <hl> ",
-                        eos_token=" </s>"
-                )
-                train_data = processor.process(train_data)
+        print(f"processing dataset on setting {args.preprocess_setting}...")
+        processor = DataProcessor(
+                sep_token = " <hl> ",
+                eos_token = " </s> ",
+                setting = args.preprocess_setting
+        )
+        processed_train_data = processor.process(train_data)
+        processed_train_data = processor.filter_examples(processed_train_data)
+        
+        # if args.preprocess_setting == "AQPL":
+        #         processed_train_data = processed_train_data.select(processor.relevant_examples_indices)
+        #         _logger.info(f"""Filtered in {len(processor.relevant_examples_indices)}, 
+        #         filtered out {len(train_data) - len(processor.relevant_examples_indices)}""")
 
         tokenizer = AutoTokenizer.from_pretrained(args.model)
         encoder = Encoder(device=device)
         encoder.tokenize(
-                        dataset=train_data, 
+                        dataset=processed_train_data, 
                         tokenizer=tokenizer, 
                         max_length_source=args.max_length_source, 
                         max_length_target=args.max_length_target, 
