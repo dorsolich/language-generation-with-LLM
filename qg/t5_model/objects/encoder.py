@@ -3,7 +3,7 @@ import time
 import torch
 import os
 from tqdm import tqdm
-from qg.t5_model.utils import format_time
+from qg.utils import format_time
 from qg.config.config import get_logger
 _logger = get_logger(logger_name=__name__)
 

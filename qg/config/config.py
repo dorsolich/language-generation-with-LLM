@@ -53,3 +53,5 @@ _logger = get_logger(logger_name=__name__)
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 _logger.info(f"""Day: {today}, time: {now}, running in device: {device}""")
 
+
+LEARNINGQ_DATA_DIR = PACKAGE_ROOT/"qg"/"LearningQ_data"
