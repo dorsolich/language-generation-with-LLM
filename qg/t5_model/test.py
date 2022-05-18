@@ -74,8 +74,8 @@ def main(args):
         else:
             if decoder.decode_example(example=example):
                 encoder.encode(
-                                tokenizer=tokenizer,
-                                data = example,
+                                tokenizer = tokenizer,
+                                data = example["context"],
                                 one_example = True,
                                 max_length_source = args.context_max_length,
                                 truncation = True, 
@@ -86,7 +86,7 @@ def main(args):
                                 model = model, 
                                 tokenizer = tokenizer,
                                 encodings = encoder.encoded_example,
-                                num_beams=args.num_beams,  
+                                num_beams = args.num_beams,  
                                 question_max_length = args.question_max_length, 
                                 repetition_penalty = 2.5,
                                 length_penalty = 1,
