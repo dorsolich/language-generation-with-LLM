@@ -9,6 +9,7 @@ from datasets import load_dataset
 from transformers import T5Tokenizer
 
 from qg.config.config import get_logger, device, today, now, PACKAGE_ROOT
+from qg.t5_model.objects.encoder import Encoder
 from qg.t5_model.objects.decoder import Decoder
 _logger = get_logger(logger_name=__name__)
 
@@ -37,51 +38,62 @@ def main(args):
     model = torch.load(PATH, map_location=device)
     model.eval().to(device)
 
+    encoder = Encoder(device=device)
     decoder = Decoder(device=device)
-    for i, example in tqdm(enumerate(test_data)):
 
+    _logger.info(f"Decoding {len(test_data)} examples")
+    for i, example in tqdm(enumerate(test_data)):
         #### TEST SETTING ####
         if args.test == True:
             if i == 0:
                 if decoder.decode_example(example=example):
-                    decoder.tokenize(
-                                    tokenizer=tokenizer, 
-                                    max_length_source=args.context_max_length, 
-                                    truncation=True, 
-                                    padding="max_length",
+                    encoder.encode(
+                                    tokenizer = tokenizer,
+                                    data = example["context"],
+                                    one_example = True,
+                                    max_length_source = args.context_max_length,
+                                    truncation = True, 
+                                    padding = "max_length",
                                     return_tensors = "pt"
                                     )
                     decoder.decode(
-                                    model=model, 
-                                    num_beams=args.num_beams,  
-                                    question_max_length=args.question_max_length, 
-                                    repetition_penalty=2.5,
-                                    length_penalty=1,
-                                    early_stopping=True,
-                                    use_cache=True,
-                                    num_return_sequences=1,
-                                    do_sample=False
+                                    model = model, 
+                                    tokenizer = tokenizer,
+                                    encodings = encoder.encoded_example,
+                                    num_beams = args.num_beams,  
+                                    question_max_length = args.question_max_length, 
+                                    repetition_penalty = 2.5,
+                                    length_penalty = 1,
+                                    early_stopping = True,
+                                    use_cache = True,
+                                    num_return_sequences = 1,
+                                    do_sample = False
                                     )
+
+        ### NO TEST SETTING ###
         else:
-            ### NO TEST SETTING ###
             if decoder.decode_example(example=example):
-                decoder.tokenize(
-                                tokenizer=tokenizer, 
-                                max_length_source=args.context_max_length, 
-                                truncation=True, 
-                                padding="max_length",
+                encoder.encode(
+                                tokenizer = tokenizer,
+                                data = example["context"],
+                                one_example = True,
+                                max_length_source = args.context_max_length,
+                                truncation = True, 
+                                padding = "max_length",
                                 return_tensors = "pt"
                                 )
                 decoder.decode(
-                                model=model, 
-                                num_beams=args.num_beams,  
-                                question_max_length=args.question_max_length, 
-                                repetition_penalty=2.5,
-                                length_penalty=1,
-                                early_stopping=True,
-                                use_cache=True,
-                                num_return_sequences=1,
-                                do_sample=False
+                                model = model, 
+                                tokenizer = tokenizer,
+                                encodings = encoder.encoded_example,
+                                num_beams = args.num_beams,  
+                                question_max_length = args.question_max_length, 
+                                repetition_penalty = 2.5,
+                                length_penalty = 1,
+                                early_stopping = True,
+                                use_cache = True,
+                                num_return_sequences = 1,
+                                do_sample = False
                                 )
                 
 
@@ -97,7 +109,7 @@ def main(args):
     with open(PATH, "w", encoding="utf-8") as f:
         json.dump(results, f, ensure_ascii=False)
 
-    with open(RESULTS_T5_DIR/f"{args.dataset_split}_source_texts.txt", 'w', encoding="utf8") as f:
+    with open(RESULTS_T5_DIR/f"{args.dataset_split}_source_texts.txt", 'w') as f:
         f.write("\n".join(decoder.source_texts))
 
     with open(RESULTS_T5_DIR/f"{args.dataset_split}_target_texts.txt", 'w') as f:
