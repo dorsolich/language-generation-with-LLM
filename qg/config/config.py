@@ -47,7 +47,7 @@ def get_logger(*, logger_name):
 
     return logger
 
-_logger = get_logger(logger_name=__name__)
+_logger = get_logger(logger_name=__file__)
 
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'

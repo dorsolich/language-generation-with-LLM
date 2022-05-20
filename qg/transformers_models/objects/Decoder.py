@@ -1,9 +1,9 @@
 from qg.config.config import get_logger, device
-_logger = get_logger(logger_name=__name__)
+_logger = get_logger(logger_name=__file__)
 _logger.info(f"""Running in device: {device}""")
 
 
-class Decoder:
+class DecoderObject:
     def __init__(self, device) -> None:
         self.device = device
         self.source_texts = []
@@ -11,7 +11,7 @@ class Decoder:
         self.model_outputs = []
         self.prev_passage = ""
 
-    def decode_example(self, example):
+    def decode_example(self, example) -> bool:
         decode = True
         self.context = example["context"].replace('\n', '')
         self.question = example["question"]
