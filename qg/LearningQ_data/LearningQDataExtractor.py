@@ -100,4 +100,4 @@ if __name__=="__main__":
 
     with open("cls_dataset.json", "w") as f:
         json.dump(extractor.formatted_data, f)
-    print("done")
+    print("cls_dataset.json successfully generated.")

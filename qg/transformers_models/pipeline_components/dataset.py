@@ -1,9 +1,8 @@
-
-import imp
+import json
+from matplotlib.font_manager import json_load
 from sklearn.base import BaseEstimator, TransformerMixin
 from datasets import load_dataset
-from qg.transformers_models.objects.LearningQDataExtractor import LearningQDataExtractorObject
-from qg.config.config import get_logger
+from qg.config.config import get_logger, LEARNINGQ_DATA_DIR
 _logger = get_logger(logger_name=__file__)
 
 class DatasetLoader(BaseEstimator, TransformerMixin):
@@ -18,10 +17,8 @@ class DatasetLoader(BaseEstimator, TransformerMixin):
     def transform(self, X: dict) -> dict:
 
         if self.dataset == "LearningQ":
-            extractor = LearningQDataExtractorObject(zipfile_name = "qg/LearningQ_data/LearningQ.zip")
-            extractor.extract_data(data_path = "data/khan/khan_labeled_data", task = "classification")
-            extractor.transform_classification_data()
-            dataset = extractor.formatted_data
+            with open(LEARNINGQ_DATA_DIR/"cls_dataset.json") as f:
+                dataset = json.load(f)
             X["dataset"] = dataset[self.split]
             _logger.info(f"{self.split} set of length {len(X['dataset']['text'])} correctly loaded to the pipeline")
 

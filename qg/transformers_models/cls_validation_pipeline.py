@@ -16,14 +16,12 @@ from qg.transformers_models.pipeline_components.encode import (
     DataLoaderComponent
 )
 from qg.transformers_models.pipeline_components.model import TrainedModelUploader
-from qg.transformers_models.pipeline_components.train import Trainer
 from qg.transformers_models.pipeline_components.validate import ModelValidator
-from qg.transformers_models.arguments.args_cls_training import cls_train_parser
+from qg.transformers_models.arguments.args_cls_validation import cls_validation_parser
 from qg.config.config import get_logger, device, today, now, PACKAGE_ROOT
 _logger = get_logger(logger_name=__file__)
-RESULTS_DIR = PACKAGE_ROOT/"qg"/"transformers_models"/f"results_{today}_{now}"
-RESULTS_DIR.mkdir(exist_ok=True)
-args = cls_train_parser.parse_args()
+args = cls_validation_parser.parse_args()
+RESULTS_DIR = PACKAGE_ROOT/"qg"/"transformers_models"/args.results_folder
 
 seed_val = args.seed
 random.seed(seed_val)
@@ -102,7 +100,7 @@ if __name__ == '__main__':
         if key not in ignore:
             results[key] = y[key]
     
-    file_name = f"results_{args.model_name}_{today}_{now}.json"
+    file_name = f"{args.dataset_split}_results_{args.model_name}_{today}_{now}.json"
     PATH = os.path.join(RESULTS_DIR, file_name)
     
     with open(PATH, "w", encoding="utf-8") as f:
