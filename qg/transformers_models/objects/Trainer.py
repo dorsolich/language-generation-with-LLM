@@ -5,9 +5,20 @@ import torch
 from torch import nn
 import os
 from tqdm import tqdm
-from qg.utils import format_time
 from qg.config.config import get_logger
 _logger = get_logger(logger_name=__file__)
+
+import datetime
+
+def format_time(elapsed):
+    '''
+    Takes a time in seconds and returns a string hh:mm:ss
+    '''
+    # Round to the nearest second.
+    elapsed_rounded = int(round((elapsed)))
+
+    # Format as hh:mm:ss
+    return str(datetime.timedelta(seconds=elapsed_rounded))
 
 
 class TrainerObject:
