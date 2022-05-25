@@ -71,7 +71,11 @@ class ValidatorObject:
         self.metric.add_batch(predictions=predictions, references=targets)
 
         list_predictions = predictions.detach().cpu().numpy().tolist()
-        list_targets = targets.to('cpu').numpy()
+        list_targets = targets.to('cpu').numpy().tolist()
+        assert type(list_predictions) == list
+        assert type(list_targets) == list
+
+        
 
         self.pred_y.extend(list_predictions)
         self.true_y.extend(list_targets)
