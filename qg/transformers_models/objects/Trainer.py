@@ -60,6 +60,7 @@ class TrainerObject:
                 self._training_step(batch)
 
                 if test and i>5:
+                    print("Training stopped")
                     break
 
             avg_epoch_loss = self.epoch_total_loss / len(data_loader)
@@ -103,7 +104,7 @@ class TrainerObject:
                         )
 
 
-        loss = outputs.loss
+        loss = outputs[0]
         self.batch_loss = loss.item()
         self.epoch_total_loss += self.batch_loss
         loss.backward()

@@ -1,6 +1,12 @@
+import sys
+import pathlib
+PACKAGE_ROOT = pathlib.Path(__file__).resolve().parents[2]
+sys.path.append(str(PACKAGE_ROOT))
+
 from zipfile import ZipFile
 import torch
 import json
+from qg.config.config import LEARNINGQ_DATA_DIR
 
 class LearningQDataExtractorObject:
     def __init__(self, zipfile_name) -> None:
@@ -98,6 +104,6 @@ if __name__=="__main__":
     extractor.extract_data(data_path = "data/khan/khan_labeled_data", task = "classification")
     extractor.transform_classification_data()
 
-    with open("cls_dataset.json", "w") as f:
+    with open(LEARNINGQ_DATA_DIR/"cls_dataset.json", "w") as f:
         json.dump(extractor.formatted_data, f)
-    print("cls_dataset.json successfully generated.")
+    print(f"cls_dataset.json successfully generated. Saved in dir: {LEARNINGQ_DATA_DIR}")

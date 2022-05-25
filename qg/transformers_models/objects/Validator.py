@@ -33,6 +33,7 @@ class ValidatorObject:
                 self._evaluation_step(batch)
 
                 if test and i>5:
+                    print("Validation stopped")
                     break
 
             avg_epoch_loss = self.epoch_total_loss / len(data_loader)
@@ -60,9 +61,9 @@ class ValidatorObject:
                 labels = targets
             )
 
-        loss = outputs.loss
+        loss = outputs[0]
         batch_loss = loss.item()
-        logits = outputs.logits
+        logits = outputs[1]
 
         predictions = torch.argmax(logits, dim=-1)
         self.metric.add_batch(predictions=predictions, references=targets)
