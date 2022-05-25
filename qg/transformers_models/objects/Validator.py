@@ -70,8 +70,8 @@ class ValidatorObject:
         predictions = torch.argmax(logits, dim=-1)
         self.metric.add_batch(predictions=predictions, references=targets)
 
-        list_predictions = predictions.detach().numpy().tolist()
-        list_targets = targets.detach().numpy().tolist()
+        list_predictions = predictions.detach().cpu().numpy().tolist()
+        list_targets = targets.detach().cpu().numpy().tolist()
 
         self.pred_y.extend(list_predictions)
         self.true_y.extend(list_targets)
