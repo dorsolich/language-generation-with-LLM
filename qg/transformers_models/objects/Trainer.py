@@ -92,7 +92,7 @@ class TrainerObject:
                         )
 
 
-        loss = outputs.loss
+        loss = outputs[0]
         self.batch_loss = loss.item()
         self.epoch_total_loss += self.batch_loss
         loss.backward()

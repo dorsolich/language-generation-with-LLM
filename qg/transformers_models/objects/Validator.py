@@ -16,6 +16,9 @@ class ValidatorObject:
 
     def evaluate_cls_model(self, data_loader, epochs, model, test, metric):
         
+        self.pred_y = []
+        self.true_y = []
+        
         # https://huggingface.co/metrics
         self.metric = load_metric(metric)
         self.model = model
@@ -23,8 +26,8 @@ class ValidatorObject:
         for epoch in tqdm(range(epochs)):
             self.model = self.model.eval()
             
-            self.accumulated_batch_flat_accuracy = 0
-            self.accumulated_batch_accuracy = 0
+            # self.accumulated_batch_flat_accuracy = 0
+            # self.accumulated_batch_accuracy = 0
             self.epoch_total_loss = 0
 
             
@@ -60,12 +63,18 @@ class ValidatorObject:
                 labels = targets
             )
 
-        loss = outputs.loss
+        loss = outputs[0] ## loss
         batch_loss = loss.item()
-        logits = outputs.logits
+        logits = outputs[1] ## logits
 
         predictions = torch.argmax(logits, dim=-1)
         self.metric.add_batch(predictions=predictions, references=targets)
+
+        list_predictions = predictions.detach().numpy().tolist()
+        list_targets = targets.detach().numpy().tolist()
+
+        self.pred_y.extend(list_predictions)
+        self.true_y.extend(list_targets)
 
         self.epoch_total_loss += batch_loss
         self.batch_loss_values.append(batch_loss)
