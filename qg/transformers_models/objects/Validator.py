@@ -10,8 +10,9 @@ class ValidatorObject:
     def __init__(self, device) -> None:
         self.device = device
 
-        self.batch_loss_values = []
-        self.epochs_avg_loss_values = []
+        self.validation_batch_loss_values = []
+        self.validation_epoch_loss_values = []
+        self.validation_epoch_accuracy_values = []
 
 
     def evaluate_cls_model(self, data_loader, epochs, model, test, metric):
@@ -19,18 +20,14 @@ class ValidatorObject:
         self.pred_y = []
         self.true_y = []
         
-        # https://huggingface.co/metrics
-        self.metric = load_metric(metric)
         self.model = model
 
         for epoch in tqdm(range(epochs)):
             self.model = self.model.eval()
-            
-            # self.accumulated_batch_flat_accuracy = 0
-            # self.accumulated_batch_accuracy = 0
-            self.epoch_total_loss = 0
+            # https://huggingface.co/metrics
+            self.metric = load_metric(metric)
 
-            
+            self.epoch_total_loss = 0
             
             for i, batch in enumerate(data_loader):
                 self._evaluation_step(batch)
@@ -39,11 +36,12 @@ class ValidatorObject:
                     break
 
             avg_epoch_loss = self.epoch_total_loss / len(data_loader)
-            self.epochs_avg_loss_values.append(avg_epoch_loss)
+            self.validation_epoch_loss_values.append(avg_epoch_loss)
 
-        self.validation_loss = np.mean(np.array(self.epochs_avg_loss_values))
-        score = self.metric.compute()
-        self.score = score
+            
+            # calculating epoch additional metric
+            score = self.metric.compute()
+            self.validation_epoch_accuracy_values.append(score) # only for cls
 
         return self
 
@@ -75,13 +73,11 @@ class ValidatorObject:
         assert type(list_predictions) == list
         assert type(list_targets) == list
 
-        
-
         self.pred_y.extend(list_predictions)
         self.true_y.extend(list_targets)
 
         self.epoch_total_loss += batch_loss
-        self.batch_loss_values.append(batch_loss)
+        self.validation_batch_loss_values.append(batch_loss)
     
         return self
 

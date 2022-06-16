@@ -112,7 +112,11 @@ if __name__ == '__main__':
     results["example_context"] = y["dataset"][0]["context"]
     results["example_question"] = y["dataset"][0]["question"]
     
-    ignore = ["model", "dataset", "encoded_dataset", "data_loader", "tokenizer", "metric"]
+
+
+    ignore = ["model", "dataset", "encoded_dataset", "data_loader", "tokenizer", "metric",
+            "scheduler", "optimizer", "epoch_total_loss", "batch_loss", "targets"]
+
     for arg in args.__dict__:
             results[arg] = args.__dict__[arg]
     for key in y:

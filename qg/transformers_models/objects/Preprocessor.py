@@ -30,6 +30,10 @@ class DataProcessorObject:
         elif self.setting == "AA":
             dataset = dataset.map(self._answer_awareness)
 
+        # Experiment 5: answer included
+        elif self.setting == "AI":
+            dataset = dataset.map(self._answer_included)
+
         # Experiment 4: basic processing
         dataset = dataset.map(self._eos_token)
 
@@ -93,6 +97,12 @@ class DataProcessorObject:
                 example["context"] = str_context[:i_end] + end_answer_token + str_context[i_end:]
 
             return example
+
+    def _answer_included(self, example):
+        example["context"] = 'answer: ' + example['answer'] + ' context: ' + example['paragraph']
+        example["question"] = example['question']
+        return example
+
 
     def filter_examples(self, processed_train_data):
 

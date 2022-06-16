@@ -24,6 +24,7 @@ class DecoderObject:
 
         # update prev passage variable
         self.prev_passage = self.context
+        decode = True
         return decode
 
     def decode(self,
@@ -32,14 +33,14 @@ class DecoderObject:
                 encodings,
                 num_beams,
                 question_max_length = 32,
-                repetition_penalty = 2.5,
-                length_penalty = 1,
-                early_stopping = True,
+                repetition_penalty = 2.5, # No penalty if = 1
+                length_penalty = 1, # defaults to 1
+                early_stopping = None,
                 use_cache = True,
                 num_return_sequences = 1,
                 do_sample = False,
                 ):
-
+        # https://huggingface.co/docs/transformers/main/en/main_classes/text_generation#transformers.generation_utils.GenerationMixin.generate.repetition_penalty
         generated_target_ids = model.generate(
                                             input_ids = encodings['input_ids'].to(self.device),
                                             attention_mask = encodings['attention_mask'].to(self.device),

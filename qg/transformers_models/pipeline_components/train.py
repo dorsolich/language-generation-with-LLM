@@ -15,7 +15,7 @@ class Trainer(BaseEstimator, TransformerMixin):
             test,
             model_name,
             results_dir,
-
+            evaluation_metric = False
         ):
         self.device = device
         self.learning_rate = learning_rate
@@ -25,6 +25,7 @@ class Trainer(BaseEstimator, TransformerMixin):
         self.model_name = model_name
         self.results_dir = results_dir
         self.task = task
+        self.evaluation_metric = evaluation_metric
 
     def fit(self, X, y=None):
         return self
@@ -55,18 +56,14 @@ class Trainer(BaseEstimator, TransformerMixin):
                         scheduler = scheduler, 
                         epochs = self.n_epochs,
                         test = self.test,
+                        evaluation_metric = self.evaluation_metric,
                         )
         trainer.save_model(
                         model_name = f'{self.model_name}.pt',
                         dir = self.results_dir
                         )
 
-        X["epoch_loss_values"] = trainer.epoch_loss_values
-        X["batch_loss_values"] = trainer.batch_loss_values
-        X["epoch_training_time"] = trainer.epoch_training_time
-        X["total_training_time"] = trainer.total_training_time
-        
-        if self.task == "SequenceClassification":
-            X["model"] = model
-        
+        for key in trainer.__dict__:
+            X[key] = trainer.__dict__[key]
+            
         return X

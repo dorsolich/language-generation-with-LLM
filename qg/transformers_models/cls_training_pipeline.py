@@ -71,15 +71,16 @@ cls_training_pipeline = Pipeline(
                 test = args.test,
                 model_name = args.model_name,
                 results_dir = RESULTS_DIR,
-                task = "SequenceClassification"
+                task = "SequenceClassification",
+                evaluation_metric = "accuracy"
             )
         ),
-        (
-            "ModelValidator",
-            ModelValidator(
-                task="SequenceClassification", device=device, metric="accuracy", n_epochs=args.n_epochs, test=args.test
-                )
-        )
+        # (
+        #     "ModelValidator",
+        #     ModelValidator(
+        #         task="SequenceClassification", device=device, metric="accuracy", n_epochs=args.n_epochs, test=args.test
+        #         )
+        # )
     ]
 )
 
@@ -94,16 +95,19 @@ if __name__ == '__main__':
     results folder = {RESULTS_DIR}
     """)
 
+    ### RUNNING PIPELINE ###
     X = {}
     y = cls_training_pipeline.transform(X)
     
+    ### SAVING RESULTS ###
     results = {}
     results["device"] = device
     results["len_dataset"] = len(y["dataset"]) # processed dataset
     results["example_context"] = y["dataset"]["text"][0]
     results["example_question"] = y["dataset"]["labels"][0]
 
-    ignore = ["model", "dataset", "encoded_dataset", "data_loader", "tokenizer", "metric"]
+    ignore = ["model", "dataset", "encoded_dataset", "data_loader", "tokenizer", "metric",
+            "scheduler", "optimizer", "epoch_total_loss", "batch_loss"]
     for arg in args.__dict__:
             results[arg] = args.__dict__[arg]
     for key in y:
