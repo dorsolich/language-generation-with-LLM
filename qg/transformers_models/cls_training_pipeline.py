@@ -84,7 +84,11 @@ cls_training_pipeline = Pipeline(
     ]
 )
 
-        
+
+from sklearn import set_config
+set_config(display="diagram")
+cls_training_pipeline
+
 if __name__ == '__main__':
     _logger.info(f"""Running. 
     Test = {args.test}
@@ -93,8 +97,12 @@ if __name__ == '__main__':
     model = {args.model}
     model_name = {args.model_name},
     results folder = {RESULTS_DIR}
-    """)
+    """)    
 
+    with open(RESULTS_DIR/f"{args.dataset_split}_pipeline_params.txt", 'w', encoding='utf-8') as f:
+        f.write(str(cls_training_pipeline.get_params()))
+
+    
     ### RUNNING PIPELINE ###
     X = {}
     y = cls_training_pipeline.transform(X)
@@ -114,7 +122,7 @@ if __name__ == '__main__':
         if key not in ignore:
             results[key] = y[key]
     
-    file_name = f"results_{args.model_name}_{today}_{now}.json"
+    file_name = f"{args.dataset_split}_results_{args.model_name}_{today}_{now}.json"
     PATH = os.path.join(RESULTS_DIR, file_name)
     
     with open(PATH, "w", encoding="utf-8") as f:
@@ -123,4 +131,5 @@ if __name__ == '__main__':
     with open(RESULTS_DIR/f"{args.dataset_split}_metric.txt", 'w', encoding='utf-8') as f:
         f.write(str(y["metric"]))
 
+    
     _logger.info(f"Task finished. Results saved in: {RESULTS_DIR}")

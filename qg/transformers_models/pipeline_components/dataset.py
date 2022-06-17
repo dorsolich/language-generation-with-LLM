@@ -17,7 +17,7 @@ class DatasetLoader(BaseEstimator, TransformerMixin):
     def transform(self, X: dict) -> dict:
 
         if self.dataset == "LearningQ":
-            with open(LEARNINGQ_DATA_DIR/"cls_dataset.json") as f:
+            with open(LEARNINGQ_DATA_DIR/"cls_balanced_dataset.json") as f:
                 dataset = json.load(f)
             X["dataset"] = dataset[self.split]
             _logger.info(f"{self.split} set of length {len(X['dataset']['text'])} correctly loaded to the pipeline")
