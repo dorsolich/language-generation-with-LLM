@@ -24,7 +24,7 @@ class DecoderObject:
 
         # update prev passage variable
         self.prev_passage = self.context
-        decode = True
+        # decode = True
         return decode
 
     def decode(self,
