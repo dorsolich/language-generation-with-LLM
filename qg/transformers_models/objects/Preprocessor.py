@@ -1,8 +1,8 @@
 
 from qg.config.config import get_logger
-_logger = get_logger(logger_name=__name__)
+_logger = get_logger(logger_name=__file__)
 
-class DataProcessor:
+class DataProcessorObject:
     def __init__(self, sep_token, eos_token, setting = "") -> None:
         self.sep_token = sep_token
         self.eos_token = eos_token
@@ -17,20 +17,24 @@ class DataProcessor:
 
     def process(self, dataset):
 
-        # Experiment 4: one question per line
+        # Experiment 1: one question per line
         if self.setting == "OQPL": 
-            self.check_dataset = dataset
             dataset = dataset.map(self._one_question_per_line)
         
-        # Experiment 3: all questions per line
+        # Experiment 2: all questions per line
         elif self.setting == "AQPL": # all questions per line
+            self.check_dataset = dataset
             dataset = dataset.map(self._all_questions_per_line)
 
-        # Experiment 2: answer awareness
+        # Experiment 3: answer awareness
         elif self.setting == "AA":
             dataset = dataset.map(self._answer_awareness)
 
-        # Experiment 1: basic processing
+        # Experiment 5: answer included
+        elif self.setting == "AI":
+            dataset = dataset.map(self._answer_included)
+
+        # Experiment 4: basic processing
         dataset = dataset.map(self._eos_token)
 
         return dataset
@@ -94,17 +98,29 @@ class DataProcessor:
 
             return example
 
+    def _answer_included(self, example):
+        if len(example['answers']["text"]) > 0:
+            example["context"] = 'answer: ' + example['answers']["text"][0] + ' context: ' + example['context']
+        else:
+            example["context"] = 'answer: ' + ' ' + ' context: ' + example['context']
+        # example["context"] = 'answer: ' + example['answers']["text"][0] + ' context: ' + example['context']
+        example["question"] = example['question']
+        return example
+
+
     def filter_examples(self, processed_train_data):
 
         # only applicable in setting AQPL
         if self.setting == "AQPL":
+            _logger.info("WARNING: PREPROCESSING FOR AQPL")
 
-            # due to cache memory, self.relevant_examples_indices can be an empty list
-            # this if statement checks it and populates it if needed
+            # due to cache memory issues, self.relevant_examples_indices might be an empty list
+            # this if statement checks it and populates the variable "relevant_examples_indices" if needed
             if self.relevant_examples_indices == []:
                 self.check_dataset = self.check_dataset.map(self._one_question_per_line)
             
             processed_train_data = processed_train_data.select(self.relevant_examples_indices)
+            
             _logger.info(f"""Filtered in {len(self.relevant_examples_indices)}, 
             filtered out {len(processed_train_data) - len(self.relevant_examples_indices)}""")
             

@@ -1,9 +1,9 @@
 from qg.config.config import get_logger, device
-_logger = get_logger(logger_name=__name__)
+_logger = get_logger(logger_name=__file__)
 _logger.info(f"""Running in device: {device}""")
 
 
-class Decoder:
+class DecoderObject:
     def __init__(self, device) -> None:
         self.device = device
         self.source_texts = []
@@ -11,7 +11,7 @@ class Decoder:
         self.model_outputs = []
         self.prev_passage = ""
 
-    def decode_example(self, example):
+    def decode_example(self, example) -> bool:
         decode = True
         self.context = example["context"].replace('\n', '')
         self.question = example["question"]
@@ -24,6 +24,7 @@ class Decoder:
 
         # update prev passage variable
         self.prev_passage = self.context
+        # decode = True
         return decode
 
     def decode(self,
@@ -32,14 +33,14 @@ class Decoder:
                 encodings,
                 num_beams,
                 question_max_length = 32,
-                repetition_penalty = 2.5,
-                length_penalty = 1,
-                early_stopping = True,
+                repetition_penalty = 2.5, # No penalty if = 1
+                length_penalty = 1, # defaults to 1
+                early_stopping = None,
                 use_cache = True,
                 num_return_sequences = 1,
                 do_sample = False,
                 ):
-
+        # https://huggingface.co/docs/transformers/main/en/main_classes/text_generation#transformers.generation_utils.GenerationMixin.generate.repetition_penalty
         generated_target_ids = model.generate(
                                             input_ids = encodings['input_ids'].to(self.device),
                                             attention_mask = encodings['attention_mask'].to(self.device),
@@ -50,7 +51,7 @@ class Decoder:
                                             length_penalty = length_penalty,
                                             early_stopping = early_stopping,
                                             use_cache = use_cache,
-                                            num_return_sequences = num_return_sequences
+                                            # num_return_sequences = num_return_sequences
                                             )
         for generated_target_id in generated_target_ids:
             decoded_outputs = tokenizer.decode(
