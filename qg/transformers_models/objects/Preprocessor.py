@@ -19,11 +19,11 @@ class DataProcessorObject:
 
         # Experiment 1: one question per line
         if self.setting == "OQPL": 
-            self.check_dataset = dataset
             dataset = dataset.map(self._one_question_per_line)
         
         # Experiment 2: all questions per line
         elif self.setting == "AQPL": # all questions per line
+            self.check_dataset = dataset
             dataset = dataset.map(self._all_questions_per_line)
 
         # Experiment 3: answer awareness
@@ -99,7 +99,11 @@ class DataProcessorObject:
             return example
 
     def _answer_included(self, example):
-        example["context"] = 'answer: ' + example['answer'] + ' context: ' + example['paragraph']
+        if len(example['answers']["text"]) > 0:
+            example["context"] = 'answer: ' + example['answers']["text"][0] + ' context: ' + example['context']
+        else:
+            example["context"] = 'answer: ' + ' ' + ' context: ' + example['context']
+        # example["context"] = 'answer: ' + example['answers']["text"][0] + ' context: ' + example['context']
         example["question"] = example['question']
         return example
 
@@ -108,6 +112,7 @@ class DataProcessorObject:
 
         # only applicable in setting AQPL
         if self.setting == "AQPL":
+            _logger.info("WARNING: PREPROCESSING FOR AQPL")
 
             # due to cache memory issues, self.relevant_examples_indices might be an empty list
             # this if statement checks it and populates the variable "relevant_examples_indices" if needed

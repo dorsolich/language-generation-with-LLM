@@ -1,10 +1,10 @@
 import argparse
 
 encoder_parser = argparse.ArgumentParser(description='Get all command line arguments.')
-encoder_parser.add_argument('--model', type=str, default="t5-base", help='Tokenizer and pretrained model')
-encoder_parser.add_argument('--model_name', type=str, default="t5_base", help='Tokenizer and pretrained model')
+encoder_parser.add_argument('--model', type=str, default="t5-small", help='Tokenizer and pretrained model')
+encoder_parser.add_argument('--model_name', type=str, default="t5_small", help='Tokenizer and pretrained model')
 encoder_parser.add_argument('--batch_size', type=int, default=2, help='Specify the training batch size')
-encoder_parser.add_argument('--preprocess_setting', type=str, default="OQPL", help="'AQPL', 'OQPL', 'AA' or 'basic'")
+encoder_parser.add_argument('--preprocess_setting', type=str, default="AI", help="'AQPL', 'OQPL', 'AA' or 'basic'")
 encoder_parser.add_argument('--learning_rate', type=float, default=1e-4, help='Initial learning rate')
 encoder_parser.add_argument('--adam_epsilon', type=float, default=1e-6, help='AdamW loss epsilon')
 encoder_parser.add_argument('--lr_decay', type=float, default=0.85, help='Learning rate decay rate')
@@ -13,5 +13,5 @@ encoder_parser.add_argument('--n_epochs', type=int, default=1, help='Number of t
 encoder_parser.add_argument('--max_length_source', type=int, default=512, help='Maximum length of the source text')
 encoder_parser.add_argument('--max_length_target', type=int, default=32, help='Maximum length of the target text')
 encoder_parser.add_argument('--seed', type=int, default=1, help='Specify the global random seed to make results reproducible')
-encoder_parser.add_argument('--test', type=bool, default=False, help='Set to true for testing the code, it will un a shortcut')
+encoder_parser.add_argument('--test', type=bool, default=True, help='Set to true for testing the code, it will un a shortcut')
 encoder_parser.add_argument('--dataset', type=str, default="squad_v2", help='Select the dataset')

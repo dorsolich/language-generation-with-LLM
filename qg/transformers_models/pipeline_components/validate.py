@@ -28,15 +28,16 @@ class ModelValidator(BaseEstimator, TransformerMixin):
                 metric = self.metric
             )
         elif self.task == "QuestionGeneration":
-            validator.evaluate_qg_model(
-                data_loader = X["data_loader"],
-                epochs = self.n_epochs,
-                model = X["model"],
-                test = self.test,
-                metric = self.metric,
-                max_length_target = self.max_length_target,
-                tokenizer = X["tokenizer"],
-            )
+            pass
+            # validator.evaluate_qg_model(
+            #     data_loader = X["data_loader"],
+            #     epochs = self.n_epochs,
+            #     model = X["model"],
+            #     test = self.test,
+            #     metric = self.metric,
+            #     max_length_target = self.max_length_target,
+            #     tokenizer = X["tokenizer"],
+            # )
 
         
         for key in validator.__dict__:

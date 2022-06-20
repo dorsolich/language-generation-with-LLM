@@ -51,7 +51,7 @@ class DecoderObject:
                                             length_penalty = length_penalty,
                                             early_stopping = early_stopping,
                                             use_cache = use_cache,
-                                            num_return_sequences = num_return_sequences
+                                            # num_return_sequences = num_return_sequences
                                             )
         for generated_target_id in generated_target_ids:
             decoded_outputs = tokenizer.decode(
