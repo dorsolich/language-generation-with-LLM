@@ -110,3 +110,31 @@ class LearningQEncoderObject(torch.utils.data.Dataset):
 
     def __len__(self):
         return len(self.labels)
+
+class QuestionsClassificationEncoder(torch.utils.data.Dataset):
+    """https://huggingface.co/transformers/v4.4.2/custom_datasets.html
+
+    Args:
+        torch (_type_): _description_
+    """
+    def __init__(self, 
+        tokenizer: object,
+        max_length_source: int,
+        questions: list,
+        ):
+
+        encodings = tokenizer(
+            questions,
+            max_length = max_length_source,
+            truncation = True,
+            padding = True,
+        )
+        self.questions = questions
+        self.encodings = encodings
+
+    def __getitem__(self, idx):
+        item = {key: torch.tensor(val[idx]) for key, val in self.encodings.items()}
+        return item
+
+    def __len__(self):
+        return len(self.questions)

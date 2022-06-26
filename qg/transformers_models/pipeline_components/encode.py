@@ -1,7 +1,7 @@
 from sklearn.base import BaseEstimator, TransformerMixin
 from transformers import AutoTokenizer
 from torch.utils.data import DataLoader, RandomSampler
-from qg.transformers_models.objects.Encoder import EncoderObject, LearningQEncoderObject
+from qg.transformers_models.objects.Encoder import EncoderObject, LearningQEncoderObject, QuestionsClassificationEncoder
 
 from qg.config.config import get_logger
 _logger = get_logger(logger_name=__file__)
@@ -25,8 +25,8 @@ class Encoder(BaseEstimator, TransformerMixin):
     def __init__(self, 
                 device, 
                 max_length_source, 
-                max_length_target,
                 batch_size,
+                max_length_target = None,
                 dataset = "squad_v2"
                 ):
         self.device = device
@@ -40,6 +40,7 @@ class Encoder(BaseEstimator, TransformerMixin):
 
     def transform(self, X: dict) -> dict:
 
+        # Question Generation task...
         if self.dataset == "squad_v2":
             
             encoder = EncoderObject(device=self.device)
@@ -53,7 +54,7 @@ class Encoder(BaseEstimator, TransformerMixin):
             )
             encoded_dataset = encoder.encoded_dataset
 
-
+        # Question Classification task...
         elif self.dataset == "LearningQ":
 
             text = X["dataset"]["text"]
@@ -64,6 +65,18 @@ class Encoder(BaseEstimator, TransformerMixin):
                 max_length_source = self.max_length_source, 
                 text = text, 
                 labels = labels,
+            )
+            encoded_dataset = dataset
+
+        # Classify generated questions tasks...
+        elif self.dataset == "generated_questions":
+
+            questions = X["dataset"]
+
+            dataset = QuestionsClassificationEncoder(
+                tokenizer = X["tokenizer"],
+                max_length_source = self.max_length_source, 
+                questions = questions
             )
             encoded_dataset = dataset
 
