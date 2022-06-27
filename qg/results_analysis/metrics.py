@@ -9,7 +9,7 @@ import pandas as pd
 import json
 import os
 from datasets import load_metric, load_dataset
-from qg.results_analysis.ComputeBleu import ComputeBleuObject
+from qg.results_analysis.objects.ComputeBleu import ComputeBleuObject
 from qg.config.config import get_logger, PACKAGE_ROOT
 _logger = get_logger(logger_name=__file__)
 try:
@@ -18,8 +18,9 @@ except:
     os.system("python -m spacy download en_core_web_lg")
     nlp = spacy.load("en_core_web_lg")
 
-results_folders = ["AA", "AQPL", "basic", "OQPL"]
+# results_folders = ["AA", "AQPL", "basic", "OQPL"]
 splits = ["train", "validation"]
+results_folders = ["AQPL"]
 
 for split in splits:
     for folder in results_folders:
@@ -29,15 +30,13 @@ for split in splits:
         with open(PACKAGE_ROOT/f"qg/transformers_models/t5small_batch32_{folder}/scores_{split}_questions.json", encoding="utf-8") as f:
             scores = json.load(f)
 
-        # test_pref = data["predictions"][:200]
-        # test_ref = data["references"][:200]
-
-
         ### COMPUTING ROUGE AND F1 SCORE ###
         ####################################
         _logger.info(f"Computing ROUGE score for {folder}, {split}...")
 
         rouge = load_metric("rouge")
+
+        # splitting data in batches, so rouge metric doesn't run out of memory...
         prev_i = 0
         for i in range(0, len(data["predictions"]), 200):
             batched_predictions = data["predictions"][prev_i:i]
@@ -47,7 +46,8 @@ for split in splits:
             predictions = [batched_predictions]
             references = [[[ref] for ref in batched_references]]
             rouge.add_batch(predictions=predictions, references=references)
-            
+        
+        # adding the last batch...
         if len(data["predictions"]) - i < 200:
             batch_pred = data["predictions"][i:]
             batch_ref = data["predictions"][i:]

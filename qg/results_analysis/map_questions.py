@@ -9,7 +9,9 @@ import json
 import os
 from datasets import load_dataset
 from qg.config.config import get_logger, PACKAGE_ROOT
-from qg.results_analysis.MapQuestions import MapReferencesWithGenerateQuestions
+from qg.results_analysis.objects.MapQuestions import MapReferencesWithGenerateQuestions
+from qg.results_analysis.objects.CosineSimilarity import CosineSimilarityObject
+
 _logger = get_logger(logger_name=__file__)
 try:
     nlp = spacy.load("en_core_web_lg")
@@ -18,6 +20,7 @@ except:
     nlp = spacy.load("en_core_web_lg")
 
 results_folders = ["AA", "AQPL", "basic", "OQPL"]
+results_folders = ["AQPL"]
 splits = ["train", "validation"]
 
 for split in splits:
@@ -39,15 +42,17 @@ for split in splits:
         # Uploading raw dataset...
         dataset = load_dataset('squad_v2', split=split)
 
-        _logger.info(f"Wrangling {folder}, {split}")
+        _logger.info(f"Wrangling {folder}, {split}...")
 
         # The target is to gather all the reference questions that happens in the raw dataset for each unique source text
         # and to gather the model generated question for each unique source text
         # and place the reference questions and the model generate question in a data dictionary
-        mapper = MapReferencesWithGenerateQuestions()
+        mapper = MapReferencesWithGenerateQuestions(setting=folder)
         generated_questions, target_questions = mapper.map_references_with_predictions(dataset, source_texts, ref_questions, gen_questions)
-        data, scores = mapper.select_references_by_similarity(generated_questions, target_questions)
-
+        
+        # Filtering questions by Cosine Similarity
+        similarity = CosineSimilarityObject(setting=folder)
+        data, scores = similarity.filter_by_similarity(generated_questions, target_questions)
 
 
         with open(PACKAGE_ROOT/f"qg/transformers_models/t5small_batch32_{folder}/mapped_{split}_questions.json", "w", encoding="utf-8") as f:
