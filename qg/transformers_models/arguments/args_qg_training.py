@@ -4,7 +4,7 @@ encoder_parser = argparse.ArgumentParser(description='Get all command line argum
 encoder_parser.add_argument('--model', type=str, default="t5-small", help='Tokenizer and pretrained model')
 encoder_parser.add_argument('--model_name', type=str, default="t5_small", help='Tokenizer and pretrained model')
 encoder_parser.add_argument('--batch_size', type=int, default=2, help='Specify the training batch size')
-encoder_parser.add_argument('--preprocess_setting', type=str, default="AI", help="'AQPL', 'OQPL', 'AA' or 'basic'")
+encoder_parser.add_argument('--preprocess_setting', type=str, default="AQPL", help="'AQPL', 'OQPL', 'AA' or 'basic'")
 encoder_parser.add_argument('--learning_rate', type=float, default=1e-4, help='Initial learning rate')
 encoder_parser.add_argument('--adam_epsilon', type=float, default=1e-6, help='AdamW loss epsilon')
 encoder_parser.add_argument('--lr_decay', type=float, default=0.85, help='Learning rate decay rate')

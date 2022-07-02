@@ -58,7 +58,7 @@ cls_training_pipeline = Pipeline(
             DataLoaderComponent(task="SequenceClassification", batch_size=args.batch_size)
         ),
         (
-            "PreTrainedModelUploader",
+            "PreTrainedModelDownloader",
             PreTrainedModelDownloader(task="SequenceClassification", model=args.model)
         ),
         (
@@ -75,12 +75,6 @@ cls_training_pipeline = Pipeline(
                 evaluation_metric = "accuracy"
             )
         ),
-        # (
-        #     "ModelValidator",
-        #     ModelValidator(
-        #         task="SequenceClassification", device=device, metric="accuracy", n_epochs=args.n_epochs, test=args.test
-        #         )
-        # )
     ]
 )
 
@@ -93,6 +87,7 @@ if __name__ == '__main__':
     _logger.info(f"""Running. 
     Test = {args.test}
     Epochs = {args.n_epochs}
+    learning_rate = {args.learning_rate}
     batch_size = {args.batch_size}
     model = {args.model}
     model_name = {args.model_name},

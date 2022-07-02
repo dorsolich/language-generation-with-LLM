@@ -89,7 +89,7 @@ if __name__ == '__main__':
     
     results = {}
     results["device"] = device
-    results["len_dataset"] = len(y["dataset"]) # processed dataset
+    results["len_dataset"] = len(y["dataset"]["text"]) # processed dataset
     results["example_context"] = y["dataset"]["text"][0]
     results["example_question"] = y["dataset"]["labels"][0]
 
