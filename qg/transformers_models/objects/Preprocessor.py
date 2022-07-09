@@ -54,14 +54,16 @@ class DataProcessorObject:
             self.prev_questions += example["question"] + self.sep_token
             example["question"] = self.prev_questions
             self.prev_context = example["context"]
-            self.index = self.index + 1
+            self.index = 1 + self.index
 
         else:
             self.prev_questions = example["question"] + self.sep_token
             self.prev_context = example["context"]
             if self.index != 0:
                 self.relevant_examples_indices.append(self.index-1)
-            self.index = self.index + 1
+            
+            # self.index += 1
+            self.index = 1 + self.index
 
         return example
 
@@ -117,7 +119,7 @@ class DataProcessorObject:
             # due to cache memory issues, self.relevant_examples_indices might be an empty list
             # this if statement checks it and populates the variable "relevant_examples_indices" if needed
             if self.relevant_examples_indices == []:
-                self.check_dataset = self.check_dataset.map(self._one_question_per_line)
+                self.check_dataset = self.check_dataset.map(self._all_questions_per_line)
             
             processed_train_data = processed_train_data.select(self.relevant_examples_indices)
             
