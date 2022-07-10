@@ -1,12 +1,9 @@
-import sys
-import pathlib
 import numpy as np
 import spacy
-import pandas as pd
 import json
 import os
-from datasets import load_metric, load_dataset
 from sklearn.base import BaseEstimator, TransformerMixin
+from qg.results_analysis.objects.ComputeRouge import ComputeRougeObject
 from qg.results_analysis.objects.ComputeBleu import ComputeBleuObject
 from qg.config.config import get_logger, PACKAGE_ROOT
 _logger = get_logger(logger_name=__file__)
@@ -31,41 +28,21 @@ class QuestionsMetrics(BaseEstimator, TransformerMixin):
         for split in self.splits:
             for folder in self.results_folders:
 
-                # data = X[f"{split}_{folder}"]["data"]
-                # scores = X[f"{split}_{folder}"]["scores"]
+                data = X[f"{split}_{folder}"]["data"]
+                scores = X[f"{split}_{folder}"]["scores"]
 
-                with open(PACKAGE_ROOT/f"qg/transformers_models/t5small_batch32_{folder}/mapped_{split}_questions.json", encoding="utf-8") as f:
-                    data = json.load(f)
-                with open(PACKAGE_ROOT/f"qg/transformers_models/t5small_batch32_{folder}/scores_{split}_questions.json", encoding="utf-8") as f:
-                    scores = json.load(f)
+                # with open(PACKAGE_ROOT/f"qg/transformers_models/t5small_batch32_{folder}/mapped_{split}_questions.json", encoding="utf-8") as f:
+                #     data = json.load(f)
+                # with open(PACKAGE_ROOT/f"qg/transformers_models/t5small_batch32_{folder}/scores_{split}_questions.json", encoding="utf-8") as f:
+                #     scores = json.load(f)
 
                 ### COMPUTING ROUGE AND F1 SCORE ###
                 ####################################
                 _logger.info(f"Computing ROUGE score for {folder}, {split}...")
+                rouge = ComputeRougeObject()
+                rouge.compute_rouge_scores(data=data, scores=scores)
+                scores = rouge.scores
 
-                rouge = load_metric("rouge")
-                # splitting data in batches, so rouge metric doesn't run out of memory...
-                prev_i = 0
-                for i in range(0, len(data["predictions"]), 200):
-                    batched_predictions = data["predictions"][prev_i:i]
-                    batched_references = data["predictions"][prev_i:i]
-                    prev_i = i
-
-                    predictions = [batched_predictions]
-                    references = [[[ref] for ref in batched_references]]
-                    rouge.add_batch(predictions=predictions, references=references)
-                
-                # adding the last batch...
-                if len(data["predictions"]) - i < 200:
-                    batch_pred = data["predictions"][i:]
-                    batch_ref = data["predictions"][i:]
-
-                    predictions = [batch_pred]
-                    references = [[[ref] for ref in batch_ref]]
-                    rouge.add_batch(predictions=predictions, references=references)
-                
-                results = rouge.compute()
-                scores["rouge"] = results
 
                 ### COMPUTING BLEU SCORES ####
                 ##############################
