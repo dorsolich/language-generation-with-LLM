@@ -85,12 +85,6 @@ class LearningQDataExtractorObject:
             json.dump(data, f, indent=4)
 
 
-# class Dataset(torch.utils.data.Dataset):
-#     def __init__(self, dataset):
-
-#         self.labels = dataset['labels']
-#         self.texts = dataset['text']
-
 
 if __name__=="__main__":
     

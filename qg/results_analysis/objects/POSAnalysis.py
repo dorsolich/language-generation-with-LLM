@@ -41,8 +41,7 @@ class POS_analysis_object:
         for token in nlp_sentence:
             
             if (token.is_alpha and not token.is_stop and
-                token.pos_ in self.filter_pos and
-                token.text not in ["dsfdsfdsqfsqdfdsqf"]):
+                token.pos_ in self.filter_pos):
 
                 ## the following if statement manage to match words that belong to the same concept. 
                 ## e.g: ["software", "development"] -> "software development"
@@ -72,9 +71,6 @@ class POS_analysis_object:
                     self.concepts_lemma.append([token.lemma_])
                     self.concepts_string.append([token.text])
                     self.tracking_index.append([token.i])
-
-                if token.lemma_ == "dsfdsfdsqfsqdfdsqf":
-                    print(token, token.lemma_)
 
         self.all_concepts_string = [concept[0] for concept in self.concepts_string]
         self.all_concepts_lemma = [concept[0] for concept in self.concepts_lemma]

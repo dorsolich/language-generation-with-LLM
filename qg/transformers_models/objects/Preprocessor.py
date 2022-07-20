@@ -30,10 +30,6 @@ class DataProcessorObject:
         elif self.setting == "AA":
             dataset = dataset.map(self._answer_awareness)
 
-        # Experiment 5: answer included
-        # elif self.setting == "AI":
-        #     dataset = dataset.map(self._answer_included)
-
         # Experiment 4: basic processing
         dataset = dataset.map(self._eos_token)
 
@@ -54,7 +50,8 @@ class DataProcessorObject:
             self.prev_questions += example["question"] + self.sep_token
             example["question"] = self.prev_questions
             self.prev_context = example["context"]
-            self.index = 1 + self.index
+            # self.index = 1 + self.index
+            self.index += 1
 
         else:
             self.prev_questions = example["question"] + self.sep_token
@@ -62,8 +59,8 @@ class DataProcessorObject:
             if self.index != 0:
                 self.relevant_examples_indices.append(self.index-1)
             
-            # self.index += 1
-            self.index = 1 + self.index
+            self.index += 1
+            # self.index = 1 + self.index
 
         return example
 
@@ -99,16 +96,6 @@ class DataProcessorObject:
                 example["context"] = str_context[:i_end] + end_answer_token + str_context[i_end:]
 
             return example
-
-    # def _answer_included(self, example):
-    #     if len(example['answers']["text"]) > 0:
-    #         example["context"] = 'answer: ' + example['answers']["text"][0] + ' context: ' + example['context']
-    #     else:
-    #         example["context"] = 'answer: ' + ' ' + ' context: ' + example['context']
-    #     # example["context"] = 'answer: ' + example['answers']["text"][0] + ' context: ' + example['context']
-    #     example["question"] = example['question']
-    #     return example
-
 
     def filter_examples(self, processed_train_data):
 

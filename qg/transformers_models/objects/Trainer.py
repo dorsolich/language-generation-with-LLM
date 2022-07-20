@@ -112,7 +112,7 @@ class TrainerObject:
         self.training_batch_loss_values.append(self.batch_loss)
 
         if self.task == "SequenceClassification":
-            # calculating additional bath metric
+            # calculating additional batch metric
             logits = outputs[1] ## logits
             predictions = torch.argmax(logits, dim=-1)
             self.metric.add_batch(predictions=predictions, references=targets)

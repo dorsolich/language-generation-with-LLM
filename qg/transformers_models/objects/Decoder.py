@@ -12,6 +12,10 @@ class DecoderObject:
         self.prev_passage = ""
 
     def decode_example(self, example) -> bool:
+        """Because the same context might happen more than once,
+        this function checks if the contexts already have been decoded
+        or if it is a new context to generate questions"""
+
         decode = True
         self.context = example["context"].replace('\n', '')
         self.question = example["question"]
@@ -24,7 +28,6 @@ class DecoderObject:
 
         # update prev passage variable
         self.prev_passage = self.context
-        # decode = True
         return decode
 
     def decode(self,
@@ -37,9 +40,10 @@ class DecoderObject:
                 length_penalty = 1, # defaults to 1
                 early_stopping = None,
                 use_cache = True,
-                num_return_sequences = 1,
+                num_return_sequences = 1, # selects the best question generated from all the generated questions given one input context
                 do_sample = False,
                 ):
+
         # https://huggingface.co/docs/transformers/main/en/main_classes/text_generation#transformers.generation_utils.GenerationMixin.generate.repetition_penalty
         generated_target_ids = model.generate(
                                             input_ids = encodings['input_ids'].to(self.device),
