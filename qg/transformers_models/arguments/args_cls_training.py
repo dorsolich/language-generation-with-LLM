@@ -2,7 +2,7 @@ import argparse
 
 cls_train_parser = argparse.ArgumentParser(description='Get all command line arguments.')
 cls_train_parser.add_argument('--seed', type=int, default=1, help='Specify the global random seed to make results reproducible')
-cls_train_parser.add_argument('--test', type=bool, default=False, help='Set to true for testing the code, it will un a shortcut')
+cls_train_parser.add_argument('--test', type=bool, default=True, help='Set to true for testing the code, it will un a shortcut')
 
 cls_train_parser.add_argument('--dataset', type=str, default="LearningQ", help='Select the dataset')
 cls_train_parser.add_argument('--dataset_split', type=str, default="train", help='Dataset split (train, validation)')

@@ -39,7 +39,6 @@ class ClassifierObject:
                 input_ids = input_ids,
                 attention_mask = attention_mask,
             )
-        # _logger.info(f"""outputs: {outputs}""")
 
         logits = outputs.logits ## logits
 

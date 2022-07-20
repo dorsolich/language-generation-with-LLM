@@ -31,7 +31,7 @@ torch.cuda.manual_seed_all(seed_val)
 
 
 
-cls_training_pipeline = Pipeline(
+cls_validation_pipeline = Pipeline(
     [
         (
             "DatasetUploader",
@@ -85,11 +85,11 @@ if __name__ == '__main__':
     """)
 
     X = {}
-    y = cls_training_pipeline.transform(X)
+    y = cls_validation_pipeline.transform(X)
     
     results = {}
     results["device"] = device
-    results["len_dataset"] = len(y["dataset"]) # processed dataset
+    results["len_dataset"] = len(y["dataset"]["text"]) # processed dataset
     results["example_context"] = y["dataset"]["text"][0]
     results["example_question"] = y["dataset"]["labels"][0]
 

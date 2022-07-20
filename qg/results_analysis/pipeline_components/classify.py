@@ -1,5 +1,5 @@
 from sklearn.base import BaseEstimator, TransformerMixin
-from qg.transformers_models.objects.Classifier import ClassifierObject
+from qg.results_analysis.objects.Classifier import ClassifierObject
 from qg.config.config import get_logger
 _logger = get_logger(logger_name=__file__)
 

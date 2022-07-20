@@ -77,18 +77,6 @@ qg_training_pipeline = Pipeline(
             )
 
         ),
-        # # https://huggingface.co/course/chapter7/4
-        # (
-        #     "ModelValidator",
-        #     ModelValidator(
-        #         task="QuestionGeneration", 
-        #         device=device, 
-        #         metric="bleu",
-        #         n_epochs=args.n_epochs, 
-        #         test=args.test,
-        #         max_length_target=args.max_length_target,
-        #         )
-        # )
     ]
 )
     

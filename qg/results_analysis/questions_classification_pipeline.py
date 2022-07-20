@@ -16,7 +16,7 @@ from qg.transformers_models.pipeline_components.encode import (
     DataLoaderComponent
 )
 from qg.transformers_models.pipeline_components.model import TrainedModelUploader
-from qg.transformers_models.pipeline_components.classify import QuestionsClassifier
+from qg.results_analysis.pipeline_components.classify import QuestionsClassifier
 from qg.transformers_models.arguments.args_questions_classification import questions_cls_parser
 from qg.config.config import get_logger, device, PACKAGE_ROOT
 _logger = get_logger(logger_name=__file__)
