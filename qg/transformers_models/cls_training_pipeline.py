@@ -21,9 +21,11 @@ from qg.transformers_models.pipeline_components.validate import ModelValidator
 from qg.transformers_models.arguments.args_cls_training import cls_train_parser
 from qg.config.config import get_logger, device, today, now, PACKAGE_ROOT
 _logger = get_logger(logger_name=__file__)
-RESULTS_DIR = PACKAGE_ROOT/"qg"/"transformers_models"/f"results_{today}_{now}"
-RESULTS_DIR.mkdir(exist_ok=True)
 args = cls_train_parser.parse_args()
+
+
+RESULTS_DIR = PACKAGE_ROOT/"qg"/"transformers_models"/f"classifier_{args.learning_rate}"
+RESULTS_DIR.mkdir(exist_ok=True)
 
 seed_val = args.seed
 random.seed(seed_val)

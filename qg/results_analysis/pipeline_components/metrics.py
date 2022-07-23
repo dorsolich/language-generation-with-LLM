@@ -31,9 +31,9 @@ class QuestionsMetrics(BaseEstimator, TransformerMixin):
                 data = X[f"{split}_{folder}"]["data"]
                 scores = X[f"{split}_{folder}"]["scores"]
 
-                # with open(PACKAGE_ROOT/f"qg/transformers_models/t5small_batch32_{folder}/mapped_{split}_questions.json", encoding="utf-8") as f:
+                # with open(PACKAGE_ROOT/f"qg/transformers_models/experiment_{folder}/mapped_{split}_questions.json", encoding="utf-8") as f:
                 #     data = json.load(f)
-                # with open(PACKAGE_ROOT/f"qg/transformers_models/t5small_batch32_{folder}/scores_{split}_questions.json", encoding="utf-8") as f:
+                # with open(PACKAGE_ROOT/f"qg/transformers_models/experiment_{folder}/scores_{split}_questions.json", encoding="utf-8") as f:
                 #     scores = json.load(f)
 
                 ### COMPUTING ROUGE AND F1 SCORE ###
@@ -62,9 +62,9 @@ class QuestionsMetrics(BaseEstimator, TransformerMixin):
                         average_key_name = f"average_{key_name}"
                         scores[average_key_name] = np.mean(bleu.__dict__[key])
 
-                with open(PACKAGE_ROOT/f"qg/transformers_models/t5small_batch32_{folder}/scores_{split}_questions.json", "w", encoding="utf-8") as f:
+                with open(PACKAGE_ROOT/f"qg/transformers_models/experiment_{folder}/scores_{split}_questions.json", "w", encoding="utf-8") as f:
                         json.dump(scores, f, ensure_ascii=False, indent=4)
-                _logger.info(f'Metrics results saved in: {PACKAGE_ROOT/f"qg/transformers_models/t5small_batch32_{folder}/scores_{split}_questions"}.')
+                _logger.info(f'Metrics results saved in: {PACKAGE_ROOT/f"qg/transformers_models/experiment_{folder}/scores_{split}_questions"}.')
 
 
         return X

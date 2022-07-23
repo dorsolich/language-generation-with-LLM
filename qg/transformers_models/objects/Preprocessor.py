@@ -50,8 +50,9 @@ class DataProcessorObject:
             self.prev_questions += example["question"] + self.sep_token
             example["question"] = self.prev_questions
             self.prev_context = example["context"]
-            # self.index = 1 + self.index
-            self.index += 1
+
+            self.index = 1 + self.index # modify this line if you are running cache errors running AQPL setting
+            # self.index += 1 # modify this line if you are running cache errors running AQPL setting
 
         else:
             self.prev_questions = example["question"] + self.sep_token
@@ -59,8 +60,8 @@ class DataProcessorObject:
             if self.index != 0:
                 self.relevant_examples_indices.append(self.index-1)
             
-            self.index += 1
-            # self.index = 1 + self.index
+            # self.index += 1
+            self.index = 1 + self.index
 
         return example
 

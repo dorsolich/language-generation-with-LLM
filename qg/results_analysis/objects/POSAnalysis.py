@@ -80,10 +80,10 @@ class POS_analysis_object:
 
 if __name__=="__main__":
     print(f"Root directory: {PACKAGE_ROOT}")
-    DATA_DIR_AA = PACKAGE_ROOT/'qg'/'transformers_models'/'t5small_batch32_AA'
-    DATA_DIR_AQPL = PACKAGE_ROOT/'qg'/'transformers_models'/'t5small_batch32_AQPL'
-    DATA_DIR_BASIC = PACKAGE_ROOT/'qg'/'transformers_models'/'t5small_batch32_basic'
-    DATA_DIR_OQPL = PACKAGE_ROOT/'qg'/'transformers_models'/'t5small_batch32_OQPL'
+    DATA_DIR_AA = PACKAGE_ROOT/'qg'/'transformers_models'/'experiment_AA'
+    DATA_DIR_AQPL = PACKAGE_ROOT/'qg'/'transformers_models'/'experiment_AQPL'
+    DATA_DIR_BASIC = PACKAGE_ROOT/'qg'/'transformers_models'/'experiment_basic'
+    DATA_DIR_OQPL = PACKAGE_ROOT/'qg'/'transformers_models'/'experiment_OQPL'
 
     results_folders = ["AA", "AQPL", "basic", "OQPL"]
     splits = ["train", "validation"]
@@ -93,7 +93,7 @@ if __name__=="__main__":
         for folder in results_folders:
 
             # Uploading generated questions...
-            with open(PACKAGE_ROOT/f"qg/transformers_models/t5small_batch32_{folder}/mapped_{split}_questions.json", encoding="utf-8") as f:
+            with open(PACKAGE_ROOT/f"qg/transformers_models/experiment_{folder}/mapped_{split}_questions.json", encoding="utf-8") as f:
                 questions = json.load(f)
                 predictions = questions["predictions"]
                 references = questions["references"]

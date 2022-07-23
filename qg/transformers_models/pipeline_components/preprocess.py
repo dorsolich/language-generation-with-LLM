@@ -46,7 +46,7 @@ class DataProcessor(BaseEstimator, TransformerMixin):
                 This happens because it is at least the second time you run the AQPL
                 setting in this environment. The first time you did it, the dataset was saved in memory cache. 
                 Next times you run it, it loads from cache and fails to generate a temporal variable that needs to process the data.
-                Please create a new environment and run the command again, or clean the cache...""")
+                To to preprocess.py, comment out either line 54 or 55..""")
                 os._exit(0)
 
         X["dataset"] = processed_train_data

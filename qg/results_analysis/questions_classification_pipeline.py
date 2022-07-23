@@ -21,7 +21,7 @@ from qg.transformers_models.arguments.args_questions_classification import quest
 from qg.config.config import get_logger, device, PACKAGE_ROOT
 _logger = get_logger(logger_name=__file__)
 args = questions_cls_parser.parse_args()
-RESULTS_DIR = PACKAGE_ROOT/"qg"/"transformers_models"/f"t5small_batch32_{args.preprocess_setting}"
+RESULTS_DIR = PACKAGE_ROOT/"qg"/"transformers_models"/f"experiment_{args.preprocess_setting}"
 DATA_DIR = RESULTS_DIR/f"mapped_{args.dataset_split}_questions.json"
 CLS_MODEL_DIR = PACKAGE_ROOT/"qg"/"transformers_models"/f"{args.classifier_folder}"
 
