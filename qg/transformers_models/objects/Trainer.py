@@ -5,8 +5,9 @@ from torch import nn
 import os
 from tqdm import tqdm
 from datasets import load_metric
+import gc
 
-from qg.utils import format_time
+# from qg.utils import format_time
 from qg.config.config import get_logger
 _logger = get_logger(logger_name=__file__)
 
@@ -23,7 +24,7 @@ class TrainerObject:
         # training_epoch_accuracy_values: accuracy of each epoch (preds y VS real y in all the batches in one epoch)
         self.training_epoch_accuracy_values = [] # only for cls
         
-        self.epoch_training_time = []
+        # self.epoch_training_time = []
 
         self.pred_y = []
         self.true_y = []
@@ -45,7 +46,7 @@ class TrainerObject:
         self.optimizer = optimizer
         self.scheduler = scheduler
         self.task = task
-        init_training_time = time.time()
+        # init_training_time = time.time()
 
         
         for epoch in tqdm(range(epochs)):
@@ -54,7 +55,7 @@ class TrainerObject:
             if self.task == "SequenceClassification":  
                 self.metric = load_metric(evaluation_metric)
 
-            init_epoch_time = time.time()
+            # init_epoch_time = time.time()
             self.epoch_total_loss = 0
             self.model.train()
 
@@ -68,20 +69,21 @@ class TrainerObject:
             # calculating epoch loss
             avg_epoch_loss = self.epoch_total_loss / len(data_loader)
             self.training_epoch_loss_values.append(avg_epoch_loss)
-            self.epoch_training_time.append(format_time(time.time() - init_epoch_time))
+            # self.epoch_training_time.append(format_time(time.time() - init_epoch_time))
 
             if self.task == "SequenceClassification":  
                 # calculating epoch additional metric
                 score = self.metric.compute()
                 self.training_epoch_accuracy_values.append(score) # only for cls
         
-        self.total_training_time = format_time(time.time() - init_training_time)
+        # self.total_training_time = format_time(time.time() - init_training_time)
         
         return self
 
 
 
     def _training_step(self, batch):
+        # Loading the data in GPU when unpacking the data iteratively...
         input_ids = batch["input_ids"].to(self.device)
         attention_mask = batch["attention_mask"].to(self.device)
 
@@ -91,6 +93,13 @@ class TrainerObject:
             targets = batch["target_ids"].to(self.device)
 
         elif self.task == "QuestionGeneration":
+            
+            # deleting unnecessary variables to save memory..
+            del self.pred_y
+            del self.true_y
+            del self.training_epoch_accuracy_values
+            gc.collect()
+
             self._replace_padding_token(batch["target_ids"])
             targets = self.targets.to(self.device)
 
