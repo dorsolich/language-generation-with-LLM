@@ -82,17 +82,8 @@ class TrainerObject:
 
 
     def _training_step(self, batch):
-        input_ids = batch["input_ids"].to(self.device)
-        attention_mask = batch["attention_mask"].to(self.device)
 
-        # targets are different depending on the task...
-
-        if self.task == "SequenceClassification":            
-            targets = batch["target_ids"].to(self.device)
-
-        elif self.task == "QuestionGeneration":
-            self._replace_padding_token(batch["target_ids"])
-            targets = self.targets.to(self.device)
+        input_ids, attention_mask, targets = self._inputs_to_cuda(batch)
 
         self.model.zero_grad()
         outputs = self.model(
@@ -105,6 +96,7 @@ class TrainerObject:
         self.batch_loss = loss.item()
         self.epoch_total_loss += self.batch_loss
         loss.backward()
+
         # updating optimizer and scheduler
         torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0)
         self.optimizer.step()
@@ -112,16 +104,7 @@ class TrainerObject:
         self.training_batch_loss_values.append(self.batch_loss)
 
         if self.task == "SequenceClassification":
-            # calculating additional batch metric
-            logits = outputs[1] ## logits
-            predictions = torch.argmax(logits, dim=-1)
-            self.metric.add_batch(predictions=predictions, references=targets)
-            list_predictions = predictions.detach().cpu().numpy().tolist()
-            list_targets = targets.to('cpu').numpy().tolist()
-            assert type(list_predictions) == list
-            assert type(list_targets) == list
-            self.pred_y.extend(list_predictions)
-            self.true_y.extend(list_targets)
+            self._calculate_accuracy(outputs, targets)
 
         return self
 
@@ -139,3 +122,31 @@ class TrainerObject:
         _logger.info(f"model saved in path {PATH}")
 
         return self
+
+    def _inputs_to_cuda(self, batch):
+        input_ids = batch["input_ids"].to(self.device)
+        attention_mask = batch["attention_mask"].to(self.device)
+
+        # targets are different depending on the task...
+
+        if self.task == "SequenceClassification":            
+            targets = batch["target_ids"].to(self.device)
+
+        elif self.task == "QuestionGeneration":
+            self._replace_padding_token(batch["target_ids"])
+            targets = self.targets.to(self.device)
+        return input_ids, attention_mask, targets
+
+    def _calculate_accuracy(self, outputs, targets):
+        # calculating additional batch metric
+        logits = outputs[1] ## logits
+        predictions = torch.argmax(logits, dim=-1)
+        self.metric.add_batch(predictions=predictions, references=targets)
+        list_predictions = predictions.detach().cpu().numpy().tolist()
+        list_targets = targets.to('cpu').numpy().tolist()
+        assert type(list_predictions) == list
+        assert type(list_targets) == list
+        self.pred_y.extend(list_predictions)
+        self.true_y.extend(list_targets)
+        return None
+
