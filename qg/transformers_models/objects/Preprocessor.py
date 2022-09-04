@@ -28,7 +28,7 @@ class DataProcessorObject:
 
         # Experiment 3: answer awareness
         elif self.setting == "AA":
-            dataset = dataset.map(self._answer_awareness)
+            dataset = dataset.map(self._answers_awareness)
 
         # Experiment 4: basic processing
         dataset = dataset.map(self._eos_token)
@@ -65,38 +65,38 @@ class DataProcessorObject:
 
         return example
 
-    def _answer_awareness(self, example):
+    def _answers_awareness(self, ex):
         init_answer_token = "[ANSS] "
         end_answer_token = " [ANSE]"
         
         # Examples that don't contain answers
-        if example["answers"]["answer_start"] == []:
-            return example
+        if ex["answers"]["answer_start"] == []:
+            return ex
         else:
             # Examples might contain more that one answer
-            for i in range(len(example["answers"]["answer_start"])):
+            for i in range(len(ex["answers"]["answer_start"])):
                 
                 if i == 0:
-                    i_init = example["answers"]["answer_start"][i]
+                    i_init = ex["answers"]["answer_start"][i]
                 else:
-                    i_init = example["answers"]["answer_start"][i] + (len(init_answer_token)*i)
+                    i_init = ex["answers"]["answer_start"][i] + (len(init_answer_token)*i)
 
-                str_context = str(example["context"])
-                example["context"] = str_context[:i_init] + init_answer_token + str_context[i_init:]
+                str_context = str(ex["context"])
+                ex["context"] = str_context[:i_init] + init_answer_token + str_context[i_init:]
                 self.init_indices.append(i_init)
 
-            for i in range(len(example["answers"]["answer_start"])):
+            for i in range(len(ex["answers"]["answer_start"])):
 
                 if i == 0:
-                    i_end = self.init_indices[i] + len(init_answer_token) + len(example["answers"]["text"][0])
-                    self.len_answers += len(example["answers"]["text"][0])
+                    i_end = self.init_indices[i] + len(init_answer_token) + len(ex["answers"]["text"][0])
+                    self.len_answers += len(ex["answers"]["text"][0])
                 else:
                     i_end = self.init_indices[i] + len(init_answer_token)*i+1 + self.len_answers
 
-                str_context = str(example["context"])
-                example["context"] = str_context[:i_end] + end_answer_token + str_context[i_end:]
+                str_context = str(ex["context"])
+                ex["context"] = str_context[:i_end] + end_answer_token + str_context[i_end:]
 
-            return example
+            return ex
 
     def filter_examples(self, processed_train_data):
 
