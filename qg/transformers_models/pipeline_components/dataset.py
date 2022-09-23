@@ -1,5 +1,4 @@
 import json
-from matplotlib.font_manager import json_load
 from sklearn.base import BaseEstimator, TransformerMixin
 from datasets import load_dataset
 from qg.config.config import get_logger, LEARNINGQ_DATA_DIR

@@ -136,16 +136,9 @@ class MapReferencesWithGenerateQuestions:
         A total of {total_clean_questions} clean questions have been filtered in
         Example:
         Raw model output:
-        {generated_questions[0]} 
-        {generated_questions[1]} 
+        {generated_questions[0]}
         Clean:
-        {clean_gen_questions[0]} 
-        {clean_gen_questions[1]} 
-        {clean_gen_questions[2]} 
-        {clean_gen_questions[3]} 
-        {clean_gen_questions[4]} 
-        {clean_gen_questions[5]} 
-        {clean_gen_questions[6]} 
+        {clean_gen_questions[0]}
         """)
 
         self.generated_questions = clean_gen_questions

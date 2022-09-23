@@ -63,10 +63,10 @@ if __name__ == '__main__':
     with open(RESULTS_T5_DIR/f"{args.dataset_split}_source_texts.txt", 'w', encoding='utf-8') as f:
         f.write("\n".join(y["source_texts"]))
 
-    with open(RESULTS_T5_DIR/f"{args.dataset_split}_target_texts.txt", 'w') as f:
+    with open(RESULTS_T5_DIR/f"{args.dataset_split}_target_texts.txt", 'w', encoding='utf-8') as f:
         f.write("\n".join(y["target_texts"]))
 
-    with open(RESULTS_T5_DIR/f"{args.dataset_split}_model_outputs.txt", 'w') as f:
+    with open(RESULTS_T5_DIR/f"{args.dataset_split}_model_outputs.txt", 'w', encoding='utf-8') as f:
         f.write("\n".join(y["model_outputs"]))
 
     _logger.info(f"Questions file: {file_name}, and text files saved in path: {RESULTS_T5_DIR}")

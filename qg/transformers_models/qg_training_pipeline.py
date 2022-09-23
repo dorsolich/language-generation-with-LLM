@@ -17,13 +17,15 @@ from qg.transformers_models.pipeline_components.encode import (
 )
 from qg.transformers_models.pipeline_components.model import PreTrainedModelDownloader
 from qg.transformers_models.pipeline_components.train import Trainer
-from qg.transformers_models.pipeline_components.validate import ModelValidator
+# from qg.transformers_models.pipeline_components.validate import ModelValidator
 from qg.transformers_models.arguments.args_qg_training import encoder_parser
 from qg.config.config import get_logger, device, today, now, PACKAGE_ROOT
 _logger = get_logger(logger_name=__file__)
-RESULTS_DIR = PACKAGE_ROOT/"qg"/"transformers_models"/f"results_{today}_{now}"
-RESULTS_DIR.mkdir(exist_ok=True)
 args = encoder_parser.parse_args()
+
+
+RESULTS_DIR = PACKAGE_ROOT/"qg"/"transformers_models"/f"experiment_{args.preprocess_setting}"
+RESULTS_DIR.mkdir(exist_ok=True)
 
 seed_val = args.seed
 random.seed(seed_val)
@@ -86,6 +88,7 @@ if __name__ == '__main__':
     Test = {args.test}
     Epochs = {args.n_epochs}
     batch_size = {args.batch_size}
+    preprocess_setting = {args.preprocess_setting}
     model = {args.model}
     model_name = {args.model_name},
     results folder = {RESULTS_DIR}
@@ -117,4 +120,4 @@ if __name__ == '__main__':
     with open(PATH, "w", encoding="utf-8") as f:
             json.dump(results, f, ensure_ascii=False, indent=4)
 
-    _logger.info(f"Task finished. Results saved in: {RESULTS_DIR}")
+    _logger.info(f"Task finished. Model Results and arguments saved in: {RESULTS_DIR}")
