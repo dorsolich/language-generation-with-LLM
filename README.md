@@ -1,18 +1,14 @@
 # What is this project about
 
-This project was developed to to generate a model able to generate questions sintactically and gramatically correct and to assess its suitability of the model for generating _deep_ questions. Shall the model be able to generate deep questions will prove that an _smarter GenAI_ has been created, being able to extract logical inferences and to make logical reasoning.
+This project was developed to to generate a model able to generate questions sintactically and gramatically correct, evaluating the model ability of generating _deep_ questions. Shall the model be able to generate _deep questions_ will prove that an **_smarter GenAI_** has been created, being able to extract logical inferences and to make logical reasoning.
 
-Two models have been trained and evaluated to extract conclussions:
+In order to achieve (1) the generation of questions and (2) the evaluation of the model logical reasoning capability, two models have been trained and evaluated to extract conclussions:
 1. A **Large Language Model (LLM)** was fine-tuned in the task of generating sintactically and gramatically correct questions from input text (Gen-IA). The LLM is the **Transformer T5**.
 
-2. Then, these artifically generated questions were evaluated as usefull for human learning or not usefull for human learning. The model trained for the classification task was **DistilBERT**.
+2. Then, these artifically generated questions were evaluated as usefull for human learning or not usefull for human learning. To classify the questions, a classifier model **DistilBERT** was fine-tunned in this particular task.
 
 ---
-Additionally, four data-processing settings have been tested to understand what is the most effective method of processing the input text. The selection of these methods comes from discussions in the literature where different authors tried these methods:
-- Baseline: is the most basic method that applies the least number of transformations to the input tada. It adds an end-of-sentence ([EOS]) token to indicate the end of each parragraph x<sub>i</sub> and each question y<sub>i</sub>. If the data contains a parragraph x<sub>i</sub> with more than one question y<sub>i</sub>, the parragraphs were duplicated and each duplication was liked to one possible training question.
-- All questions per line (AQPL): In this setting, a training example consisted on x<sub>i</sub> and y<sub>i</sub>, where x<sub>i</sub> is the context + [EOS], and y<sub>i</sub> has concatenated all the questions that can be generated from x<sub>i</sub>. The questions in y<sub>i</sub> were separated by a separator token [SEP].
-- One question per line (OQPL): e. In this case, the question was concatenated to the context input, including the [EOS] token between the context and the question.
-- Atention Awarenes (AA): In this case, the answer is highlited in the parragraph x<sub>i</sub>, as context spam. In the context position right before the first answer word, a token [ANSS] was inserted. In the context position where the answer ends, a token [ANSE] was inserted.
+Additionally, four data-processing settings have been tested to understand which is the most effective method for processing the input text.
 
 # Input Data
 
@@ -50,7 +46,14 @@ and although the questions can be truncated to a maximum length, large sequences
 be an inconvenience.
 For these reasons, SQuAD dataset has been selected for training the T5 model over the four
 data-processing settings.
+### Context- Question processing settings:
 
+The context (X) - question (y) pairs were preprocessed in four different ways and the model was train under each setting with the target of understanding which setting is the optimal and how much the data processing affects model performance.
+
+- **Baseline**: is the most basic method that applies the least number of transformations to the input tada. It adds an `end-of-sentence` `[EOS]` token to indicate the end of each parragraph x<sub>i</sub> and each question y<sub>i</sub>. If the data contains a parragraph x<sub>i</sub> with more than one question y<sub>i</sub>, the parragraphs were duplicated and each duplication was liked to one possible training question.
+- **All questions per line** (AQPL): In this setting, a training example consisted on x<sub>i</sub> and y<sub>i</sub>, where x<sub>i</sub> is the `context + [EOS]`, and y<sub>i</sub> has concatenated all the questions that can be generated from x<sub>i</sub>. The questions in y<sub>i</sub> were separated by a `separator token [SEP]`.
+- **One question per line** (OQPL): In this case, the question was concatenated to the context input, including the `[EOS]` token between the context and the question.
+- **Atention Awarenes** (AA): In this case, the answer is highlited in the parragraph x<sub>i</sub>, as context spam. In the context position right before the first answer word, a token `[ANSS]` was inserted. In the context position where the answer ends, a token `[ANSE]` was inserted.
 
 # Training and Evaluation Pipelines
 
