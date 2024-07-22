@@ -1,6 +1,6 @@
 # What is this project about
 
-This project was developed to to generate a model able to generate questions sintactically and gramatically correct, evaluating the model ability of generating _deep_ questions. Shall the model be able to generate _deep questions_ will prove that an **_smarter GenAI_** has been created, being able to extract logical inferences and to make logical reasoning.
+This project was developed to generate a model able to generate questions sintactically and gramatically correct, evaluating the model ability of generating _deep_ questions. Shall the model be able to generate _deep questions_ will prove that an **_smarter GenAI_** has been created, being able to extract logical inferences and to make logical reasoning.
 
 In order to achieve (1) the generation of questions and (2) the evaluation of the model logical reasoning capability, two models have been trained and evaluated to extract conclussions:
 1. A **Large Language Model (LLM)** was fine-tuned in the task of generating sintactically and gramatically correct questions from input text (Gen-IA). The LLM is the **Transformer T5**.
